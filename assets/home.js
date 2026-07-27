@@ -108,7 +108,7 @@
         return;
       }
       const s = document.createElement('script');
-      s.src = 'data/posts/' + encodeURIComponent(list[i].id) + '.js';
+      s.src = 'data/posts/' + encodeURIComponent(list[i].id) + '.js?v=' + (window.__BUST || Date.now());
       s.onload = () => {
         const p = window.__POST__;
         if (p && p.id === list[i].id) {

@@ -1,0 +1,28 @@
+# Cloudflare Pages 缓存策略
+# 目的：改完文章 / 样式后，普通刷新就能看到新内容，不必开无痕
+
+# HTML 页面：始终向服务器核对是否有更新
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# 文章数据 / 站点配置：经常变，禁止长缓存
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# CSS/JS：允许短缓存；URL 上还有 ?v=版本号，内容一变地址就变
+/assets/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+# 上传的图片：变化少，可以缓存久一点（换图会换文件名）
+/uploads/*
+  Cache-Control: public, max-age=604800, must-revalidate
+
+# 订阅源也要及时更新
+/feed.xml
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sitemap.xml
+  Cache-Control: public, max-age=0, must-revalidate

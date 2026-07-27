@@ -170,13 +170,73 @@ function tokenValid(req) {
   return !!exp && exp > Date.now();
 }
 
+/**
+ * 计算缓存版本号：内容一变，版本就变。
+ * 浏览器 / CDN 看到 ?v=新版本 会重新下载，不用再开无痕。
+ */
+function makeBust(db) {
+  const h = crypto.createHash('sha1');
+  h.update(JSON.stringify(db || {}));
+  const feedFile = (p) => {
+    try {
+      const st = fs.statSync(p);
+      if (st.isFile()) {
+        h.update(p);
+        h.update(String(st.mtimeMs));
+        h.update(String(st.size));
+      }
+    } catch (e) { /* 没有这个文件就跳过 */ }
+  };
+  const feedDir = (dir, re) => {
+    try {
+      fs.readdirSync(dir).forEach((f) => {
+        if (re && !re.test(f)) return;
+        feedFile(path.join(dir, f));
+      });
+    } catch (e) { /* 目录不存在就跳过 */ }
+  };
+  feedDir(path.join(ROOT, 'assets'), /\.(css|js|svg|png)$/i);
+  feedDir(DATA_DIR, /\.js$/i);
+  feedDir(POSTS_DIR, /\.js$/i);
+  feedDir(UPLOAD_DIR, /\.(jpg|jpeg|png|gif|webp|avif|svg)$/i);
+  return h.digest('hex').slice(0, 10);
+}
+
+/**
+ * 给所有 HTML 里的 CSS/JS 链接打上 ?v=版本号。
+ * 每次保存文章 / 推送上线都会刷新，避免被浏览器死缓存。
+ */
+function stampHtml(bust) {
+  const re = /(href|src)="((?:assets|data)\/[^"?#]+)"/g;
+  fs.readdirSync(ROOT).filter((f) => f.endsWith('.html')).forEach((f) => {
+    const fp = path.join(ROOT, f);
+    let html = fs.readFileSync(fp, 'utf8');
+    const next = html.replace(re, (m, attr, url) => {
+      const clean = url.split('?')[0];
+      // 只给样式、脚本、图标等静态资源加版本；别动普通页面链接
+      if (!/\.(css|js|svg|png|webmanifest|jpg|jpeg|gif|webp)$/i.test(clean)) return m;
+      return attr + '="' + clean + '?v=' + bust + '"';
+    });
+    // 根目录的 manifest 也戳一下
+    const next2 = next.replace(
+      /(href)="(site\.webmanifest)(?:\?v=[^"]*)?"/g,
+      '$1="$2?v=' + bust + '"'
+    );
+    if (next2 !== html) fs.writeFileSync(fp, next2, 'utf8');
+  });
+}
+
 /** 把底稿编译成网页可直接 <script> 引入的文件 */
 function build(db) {
   ensureDirs();
   const site = db.site || defaultDB().site;
+  const bust = makeBust(db);
+
   fs.writeFileSync(
     path.join(DATA_DIR, 'site.js'),
-    '/* 自动生成，请勿手改 —— 改内容请打开后台 */\nwindow.SITE = ' + JSON.stringify(site, null, 2) + ';\n',
+    '/* 自动生成，请勿手改 —— 改内容请打开后台 */\n' +
+      'window.__BUST = ' + JSON.stringify(bust) + ';\n' +
+      'window.SITE = ' + JSON.stringify(site, null, 2) + ';\n',
     'utf8'
   );
 
@@ -218,7 +278,11 @@ function build(db) {
     }
   });
 
+  // HTML 里的 CSS/JS 全部带上新版本号
+  stampHtml(bust);
+
   buildFeedAndSitemap(db, index);
+  return bust;
 }
 
 /* ------------------------- RSS / 站点地图 / robots ------------------------- */
@@ -640,5 +704,13 @@ server.on('listening', () => {
 });
 
 ensureDirs();
-build(readDB());
+const __bust = build(readDB());
+
+// 只刷新缓存版本号、不启动服务器（给「更新线上网站」脚本用）
+// 用法：node server.js --stamp-only
+if (process.argv.includes('--stamp-only')) {
+  console.log('cache bust =', __bust);
+  process.exit(0);
+}
+
 listen(START_PORT);

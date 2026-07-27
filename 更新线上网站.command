@@ -30,6 +30,21 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 1
 fi
 
+# 推送前刷新缓存版本号（给 CSS/JS/文章数据打上新的 ?v=…）
+# 这样 Cloudflare / 浏览器不会继续用旧缓存，你也不用开无痕去核对
+if command -v node >/dev/null 2>&1; then
+  echo "  → 刷新缓存版本号（防止浏览器显示旧页面）…"
+  if node server.js --stamp-only; then
+    echo "  ✓ 版本号已更新"
+  else
+    echo "  · 版本号刷新失败（仍会继续推送，但可能要强刷浏览器）"
+  fi
+  echo ""
+else
+  echo "  · 没找到 node，跳过缓存版本刷新"
+  echo ""
+fi
+
 echo "  → 正在检查改动…"
 git add -A
 echo ""
@@ -66,9 +81,10 @@ echo "  → 推送到 GitHub…"
 if git push; then
   echo ""
   echo "  ✓ 推送成功！"
-  echo "    等 1～2 分钟后刷新线上网站即可看到更新："
+  echo "    等 1～2 分钟让 Cloudflare 部署完成，然后普通刷新（⌘R）即可。"
+  echo "    已自动换缓存版本号，一般不必再开无痕。"
   echo "    · https://donvitsch-website.pages.dev"
-  echo "    · https://donvitsch.blog  （域名绑好后）"
+  echo "    · https://donvitsch.blog"
   echo ""
 else
   echo ""

@@ -26,7 +26,7 @@
     return new Promise((resolve, reject) => {
       if (!pid) return reject(new Error('缺少文章编号'));
       const s = document.createElement('script');
-      s.src = 'data/posts/' + encodeURIComponent(pid) + '.js?t=' + Date.now();
+      s.src = 'data/posts/' + encodeURIComponent(pid) + '.js?v=' + (window.__BUST || Date.now());
       s.onload = () => (window.__POST__ ? resolve(window.__POST__) : reject(new Error('文章内容为空')));
       s.onerror = () => reject(new Error('找不到这篇文章'));
       document.head.appendChild(s);
