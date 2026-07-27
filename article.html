@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>阅读 · 唐维西</title>
+<meta name="description" content="唐维西的文章。">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="唐维西" href="feed.xml">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-theme="light">
+
+<a class="skip-link" href="#prose">跳到正文</a>
+
+<div class="ambient" aria-hidden="true"></div>
+
+<!-- 阅读页 Dock：返回键常驻，标题和进度条在滚动后出现 -->
+<nav class="dock dock--article" id="dock">
+  <div class="dock-inner">
+    <a class="dock-back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      <span id="backText">返回首页</span>
+    </a>
+    <div class="dock-title" id="topbarTitle"></div>
+    <div class="dock-actions">
+      <button class="glass-btn" id="langToggle" aria-label="切换语言">En</button>
+      <button class="glass-btn" id="themeToggle" aria-label="切换深浅色">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.4 6.4-.7-.7M6.3 6.3l-.7-.7m12.7 0-.7.7M6.3 17.7l-.7.7M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.4 15.4A9 9 0 0 1 8.6 3.6 9 9 0 1 0 20.4 15.4z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="dock-progress" id="readProgress"></div>
+  </div>
+</nav>
+
+<div class="article-shell">
+  <div class="article-main">
+    <div class="article-hero" id="hero"></div>
+    <article class="prose" id="prose"></article>
+    <div class="article-end" id="articleEnd"></div>
+  </div>
+  <aside class="toc-rail">
+    <nav class="toc" id="toc" hidden></nav>
+  </aside>
+</div>
+
+<script src="data/site.js"></script>
+<script src="data/articles.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/article.js"></script>
+</body>
+</html>

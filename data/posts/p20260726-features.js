@@ -1,0 +1,21 @@
+/* 自动生成，请勿手改 */
+window.__POST__ = {
+  "id": "p20260726-features",
+  "title": "这个网站现在能做什么：功能全览",
+  "summary": "全文搜索、双语、深色模式、友链、RSS、一键备份……把这个小网站的全部本事一次列清楚。",
+  "content": "<p>这个网站看起来是个简单的博客，其实里面藏了不少心思。这篇把它现在能做的事一次性列全 —— 既是功能说明书，也是一篇「原来还能这样」的导览。</p><h2>一、给读者的：阅读体验</h2><h3>找文章</h3><ul><li><strong>全文搜索</strong>：首页搜索框不止搜标题和标签，<strong>正文里的每一个词都能搜到</strong>。只记得文章里提过「斜杠」两个字？搜它就能找到。按 <code>/</code> 键光标直接跳进搜索框</li><li><strong>标签筛选</strong>：点首页的标签胶囊，只看某一类文章；从文章页点标签也能跳回来</li><li><strong>归档页</strong>：所有文章按年份排成时间线，翻旧文最快的路</li><li><strong>友链页</strong>：朋友们的网站，一人一张卡片</li></ul><h3>读文章</h3><ul><li><strong>文章目录</strong>：长文右侧自动生成目录，滚到哪一节就高亮哪一节，顶部还有阅读进度条</li><li><strong>小节直达链接</strong>：鼠标移到任何小标题上会浮出一个 <code>#</code>，点一下就把这一节的直达链接复制好了，发给朋友直接跳到那一段</li><li><strong>代码块</strong>：自动语法着色，右上角悬停出现「复制」按钮，一键拷走</li><li><strong>图片灯箱</strong>：点正文里的图片会从原位弹出放大，再点收回去；长文里的图片滚到附近才加载，首屏不卡</li><li><strong>文末三件套</strong>：按共同标签推荐的「相关阅读」、上一篇 / 下一篇、复制链接和系统分享按钮</li><li><strong>回到顶部</strong>：滚得够深右下角才出现，不碍事</li></ul><h3>看着舒服</h3><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>深色模式</strong> —— 跟随系统自动切换，也能手动锁定，整套玻璃质感都为两种主题各调了一版</span></div><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>中英双语</strong> —— 右上角一键切换，界面文案全部跟着变，英文没填的地方自动回落中文</span></div><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>手机适配</strong> —— 从 4 寸小屏到大显示器都排得整齐</span></div><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>打印友好</strong> —— 按 ⌘P 打印或存 PDF 时自动去掉按钮和装饰，黑字白底省墨水</span></div><h2>二、给作者的：写作后台</h2><p>首页右下角「✍️ 写文章」进后台（要密码）。写作体验对标 Notion：</p><ul><li>输入 <code>/</code> 唤出插入菜单：标题、列表、引用、代码块、表格、图片、提示框、待办清单、分割线</li><li>行首打 <code>#</code>、<code>-</code>、<code>&gt;</code>、数字加点这些符号，自动变成对应格式</li><li>选中文字浮出格式条：加粗、斜体、高亮、行内代码、加链接（⌘K）</li><li>图片随便拖进来、粘贴进来，自动存到本地 <code>uploads/</code> 文件夹</li><li><strong>从网页导入</strong>：贴个网址，自动抓正文、洗掉广告导航、把图片也搬回本地</li></ul><h3>不用你操心的事</h3><p>日期、字数、阅读时间、摘要、封面图、NEW 徽章，全部自动。打字停半秒就自动暂存到本机，改砸了只要不点保存就不会影响网站。</p><h3>文章的四种状态</h3><table><thead><tr><th>状态</th><th>效果</th></tr></thead><tbody><tr><td>草稿</td><td>只有后台能看见，网站上完全不存在</td></tr><tr><td>已发布</td><td>首页、归档、RSS 里都有</td></tr><tr><td>已隐藏</td><td>列表里消失，但知道链接的人能打开 —— 适合悄悄分享</td></tr><tr><td>置顶</td><td>永远排在首页第一个</td></tr></tbody></table><h2>三、整站都能改成你的样子</h2><p>后台「⚙︎ 网站设置」里，这些全都可视化编辑，改完立刻生效：</p><ul><li>网站名字、一句话简介（中英文各一份）</li><li>头像：GitHub 图标 / 文字圆标 / 上传自己的照片，带实时预览，首页关于页后台三处同步</li><li>首页那排社交链接：GitHub、邮箱、微信、知乎、B站、小红书、X……随便加删</li><li>标签库：写文章时推荐的备选标签</li><li>友链：朋友的名字、网址、一句话介绍</li><li>页脚文字、网站正式网址</li></ul><h2>四、看不见但一直在干活的</h2><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>RSS 订阅</strong> —— 自动生成带全文的 feed.xml，别人可以用阅读器追更</span></div><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>搜索引擎优化</strong> —— sitemap、robots.txt、每篇文章的结构化数据和分享卡片信息，全自动</span></div><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>一键备份</strong> —— 后台点「⤓ 备份」，文字和图片打包成 zip，自动保留最近 10 份</span></div><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>密码保护</strong> —— 后台密码用 scrypt 加密存储，暴力破解成本极高</span></div><div class=\"todo done\"><input type=\"checkbox\" checked=\"\" disabled=\"\"><span class=\"todo-text\"><strong>隐私防线</strong> —— 密码文件、草稿底稿在服务器层面就禁止访问，上传 GitHub 时也会被自动跳过</span></div><h2>五、这个网站的底子</h2><p>纯静态 + 零依赖：没有数据库，没有框架，没有 npm 包，整个网站就是一个文件夹。这意味着：</p><blockquote><p>只要浏览器还认识 HTML，这个网站就能一直活下去。</p></blockquote><ul><li>不开服务器，双击 <code>index.html</code> 也能读所有文章</li><li>整个文件夹拖到 GitHub Pages / Vercel / Netlify 就能上线</li><li>备份 = 拷贝文件夹，迁移 = 粘贴文件夹</li></ul><div class=\"callout\"><span class=\"callout-emoji\">💡</span><div class=\"callout-body\">想知道这些功能是怎么一步步加上来的？看下一篇<strong>《更新日志》</strong>。</div></div>",
+  "cover": "",
+  "tags": [
+    "教程",
+    "工具"
+  ],
+  "date": "2026-07-26",
+  "updated": "2026-07-26",
+  "rtManual": false,
+  "pinned": false,
+  "status": "published",
+  "hidden": true,
+  "externalUrl": "",
+  "words": 1221,
+  "readingTime": 3
+};

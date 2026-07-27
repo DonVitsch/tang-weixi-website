@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>写文章 · 唐维西的网站</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/admin.css">
+</head>
+<body class="admin" data-theme="light">
+
+<div class="admin-layout">
+
+  <!-- ============ 左侧：文章列表 ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-brand">
+        <span class="dot">唐</span>
+        <span>
+          <b>写文章</b>
+          <small id="sideSub">唐维西的网站</small>
+        </span>
+      </div>
+      <button class="btn btn-primary btn-full" id="newBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        新建文章
+      </button>
+    </div>
+
+    <div class="sidebar-search">
+      <input type="search" id="sideSearch" placeholder="搜索我的文章…">
+    </div>
+
+    <div class="post-list" id="postList"></div>
+
+    <div class="side-stats" id="sideStats"></div>
+    <div class="sidebar-foot" style="flex-wrap:wrap">
+      <button class="btn btn-sm" id="siteBtn" style="flex:1">⚙︎ 网站设置</button>
+      <button class="btn btn-sm" id="aboutBtn" style="flex:1" title="编辑「关于我」页面">🙂 关于页</button>
+      <a class="btn btn-sm" href="index.html" target="_blank" style="flex:1">👁 看网站</a>
+      <button class="btn btn-sm" id="backupBtn" title="把文章和图片打包备份到「备份」文件夹">⤓ 备份</button>
+      <button class="btn btn-sm" id="themeToggle" title="深浅色">◐</button>
+    </div>
+  </aside>
+
+  <!-- ============ 右侧：编辑区 ============ -->
+  <div class="main">
+    <div class="main-bar">
+      <!-- 删除放最左边，和右边那堆常用按钮隔开，避免误点 -->
+      <button class="btn btn-sm btn-danger" id="deleteBtn" title="删除这篇文章">删除</button>
+      <span class="save-state" id="saveState"></span>
+      <span class="spacer"></span>
+      <button class="btn btn-sm" id="importBtn" title="从一个网址导入文章内容">⇩ 从网页导入</button>
+      <button class="btn btn-sm" id="previewBtn" title="看看这篇现在长什么样（不会保存）">预览</button>
+      <button class="btn btn-sm" id="hideBtn" title="隐藏后网站上看不到这篇文章">隐藏</button>
+      <button class="btn btn-sm" id="draftBtn">转为草稿</button>
+      <button class="btn btn-lg" id="saveBtn" title="把改动保存到网站（⌘S）">保存</button>
+      <button class="btn btn-lg btn-primary" id="publishBtn">发布</button>
+    </div>
+
+    <div class="main-scroll" id="mainScroll">
+      <div class="editor-page" id="editorPage" hidden>
+
+        <!-- 封面 -->
+        <div class="cover-zone" id="coverZone">
+          <div class="cover-hint" id="coverHint">
+            <b>点击选图，或把图片拖到这里</b>
+            不传也没关系 —— 系统会按标题自动生成一张好看的渐变封面
+          </div>
+          <img id="coverImg" hidden alt="封面">
+          <div class="cover-actions">
+            <button class="btn" id="coverChange" type="button">换一张</button>
+            <button class="btn" id="coverRemove" type="button">删掉</button>
+          </div>
+        </div>
+
+        <!-- 标题 / 摘要 -->
+        <textarea class="title-input" id="titleInput" rows="1" placeholder="给文章起个标题…"></textarea>
+        <textarea class="summary-input" id="summaryInput" rows="2" placeholder="一句话摘要（留空的话，保存时自动从正文开头提取）"></textarea>
+
+        <!-- 元信息 -->
+        <div class="meta-row">
+          <div class="meta-field">
+            <label for="dateInput">日期</label>
+            <input type="date" id="dateInput">
+          </div>
+          <div class="meta-field">
+            <label for="rtInput">阅读时间</label>
+            <input type="number" id="rtInput" min="1" max="999">
+            <span style="color:var(--text-tertiary)">分钟</span>
+            <button class="btn btn-sm" id="rtAuto" type="button" title="按字数重新计算">自动</button>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="pinInput"><span class="track"></span>
+            <span style="color:var(--text-tertiary)">置顶</span>
+          </label>
+          <div class="meta-field" style="flex:1;min-width:220px">
+            <label>标签</label>
+            <div class="tags-edit" id="tagsEdit"></div>
+          </div>
+        </div>
+
+        <!-- 正文编辑器 -->
+        <div id="editor"></div>
+      </div>
+
+      <!-- 没选文章时的欢迎页 -->
+      <div class="blank" id="blank">
+        <div style="font-size:44px">✍️</div>
+        <h2>选一篇文章开始编辑</h2>
+        <p>或者点左上角的「新建文章」写一篇新的。<br>
+           日期、阅读时间、字数、摘要这些格式化的东西，我都会帮你自动填好。</p>
+        <button class="btn btn-primary" id="blankNew">新建文章</button>
+      </div>
+    </div>
+
+    <div class="stats-bar" id="statsBar" hidden>
+      <span id="statWords">0 字</span>
+      <span id="statRead">约 1 分钟</span>
+      <span id="statImgs">0 张图</span>
+      <span class="hint">
+        输入 <kbd>/</kbd> 唤出菜单 · 选中文字出格式条 · 改动会先暂存，点「保存」或 <kbd>⌘</kbd><kbd>S</kbd> 才会更新到网站
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/common.js"></script>
+<script src="assets/editor.js"></script>
+<script src="assets/admin.js"></script>
+</body>
+</html>
