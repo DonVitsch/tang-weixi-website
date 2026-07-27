@@ -49,6 +49,8 @@ window.TW = (function () {
       share: '分享',
       copy_link: '复制链接',
       link_copied: '链接已复制',
+      copied_value: '已复制',
+      copy_hint: '点击复制',
     },
     en: {
       search_placeholder: 'Search articles (full text)…',
@@ -92,6 +94,8 @@ window.TW = (function () {
       share: 'Share',
       copy_link: 'Copy link',
       link_copied: 'Link copied',
+      copied_value: 'Copied',
+      copy_hint: 'Click to copy',
     },
   };
 
@@ -270,6 +274,102 @@ window.TW = (function () {
 
   function icon(name) { return ICONS[name] || ICONS.link; }
 
+  /** 轻提示（前台页面也能用，不依赖后台 toast） */
+  function toast(msg, isError) {
+    let el = document.getElementById('tw-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'tw-toast';
+      el.className = 'tw-toast';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg || '';
+    el.classList.toggle('is-error', !!isError);
+    el.classList.add('is-show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.classList.remove('is-show'), 1800);
+  }
+
+  function copyText(text) {
+    const v = String(text || '');
+    if (!v) return Promise.reject(new Error('empty'));
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(v);
+    }
+    return new Promise((resolve, reject) => {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = v;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        ok ? resolve() : reject(new Error('copy failed'));
+      } catch (e) { reject(e); }
+    });
+  }
+
+  /** 判断一条社交链接是「打开网页」还是「复制内容」 */
+  function linkAction(l) {
+    if (l && (l.action === 'copy' || l.action === 'open')) return l.action;
+    // 兼容旧数据：没有 action 时，邮箱 / 微信号等不像网址的默认复制
+    const u = String((l && l.url) || '').trim();
+    if (!u) return 'open';
+    if (/^(https?:|mailto:|tel:)/i.test(u)) return 'open';
+    if (l && (l.icon === 'mail' || l.icon === 'wechat')) return 'copy';
+    if (u.indexOf('@') !== -1 && u.indexOf(' ') === -1) return 'copy';
+    return 'open';
+  }
+
+  function linkHref(l) {
+    const u = String((l && l.url) || '').trim();
+    if (!u) return '#';
+    if (/^(https?:|mailto:|tel:)/i.test(u)) return u;
+    if ((l && l.icon === 'mail') || (u.indexOf('@') !== -1 && u.indexOf('/') === -1)) {
+      return 'mailto:' + u.replace(/^mailto:/i, '');
+    }
+    if (/^[\w.-]+\.[\w.-]+/.test(u) && u.indexOf(' ') === -1) return 'https://' + u;
+    return u;
+  }
+
+  /** 渲染一条社交链接的 HTML（首页 / 关于页共用） */
+  function siteLinkItemHTML(l) {
+    const name = pick(l.name) || '';
+    const action = linkAction(l);
+    const isCopy = action === 'copy';
+    const href = isCopy ? '#' : escapeHTML(linkHref(l));
+    const extra = isCopy
+      ? ` href="#" role="button" data-copy="${escapeHTML(String(l.url || ''))}" title="${escapeHTML(t('copy_hint'))}"`
+      : ` href="${href}" target="_blank" rel="noopener"`;
+    return `
+      <li class="links-bar-item${isCopy ? ' is-copy' : ''}">
+        <a${extra}>
+          <span class="links-bar-icon" style="background:${escapeHTML(l.color || '#334155')}">${icon(l.icon)}</span>
+          <span class="links-bar-name">${escapeHTML(name)}</span>
+        </a>
+      </li>`;
+  }
+
+  function renderSiteLinks(listEl, links) {
+    if (!listEl) return;
+    const arr = links || [];
+    listEl.innerHTML = arr.map(siteLinkItemHTML).join('');
+    listEl.querySelectorAll('a[data-copy]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const text = a.getAttribute('data-copy') || '';
+        copyText(text).then(() => {
+          toast(t('copied_value') + '：' + text);
+        }).catch(() => {
+          // 剪贴板被拒时退回手动选择
+          window.prompt(t('copy_hint'), text);
+        });
+      });
+    });
+  }
+
   /* ============================================================
      界面行为 —— Dock / 吸顶 / 入场
      ============================================================ */
@@ -395,6 +495,7 @@ window.TW = (function () {
     countWords, readingTime, autoSummary,
     autoCoverStyle, hashOf,
     escapeHTML, newId, isLocal, icon, ICONS,
+    toast, copyText, linkAction, linkHref, siteLinkItemHTML, renderSiteLinks,
     initDock, initSticky, initBackTop, footerHTML, reveal, onScrollFrame, prefersReducedMotion,
   };
 })();

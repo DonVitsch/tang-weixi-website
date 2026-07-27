@@ -5,7 +5,11 @@
   'use strict';
 
   const SITE = window.SITE || {};
-  const ALL = (window.ARTICLES || []).slice();
+  // 置顶优先，再按日期新→旧（与后台 / 服务端 build 规则一致）
+  const ALL = (window.ARTICLES || []).slice().sort((a, b) => {
+    if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+    return String(b.date || '').localeCompare(String(a.date || ''));
+  });
 
   const $ = (id) => document.getElementById(id);
   const grid = $('grid');
@@ -44,17 +48,11 @@
     const latest = ALL.map((a) => a.updated || a.date).filter(Boolean).sort().pop();
     $('heroEyebrow').textContent = latest ? TW.t('updated') + ' ' + TW.formatDate(latest) : '';
 
-    // 链接胶囊
+    // 链接胶囊（支持「打开」或「复制」两种模式）
     const links = SITE.links || [];
     if (links.length) {
       $('linksBar').hidden = false;
-      $('linksList').innerHTML = links.map((l) => `
-        <li class="links-bar-item">
-          <a href="${TW.escapeHTML(l.url)}" target="_blank" rel="noopener">
-            <span class="links-bar-icon" style="background:${TW.escapeHTML(l.color || '#334155')}">${TW.icon(l.icon)}</span>
-            <span class="links-bar-name">${TW.escapeHTML(TW.pick(l.name))}</span>
-          </a>
-        </li>`).join('');
+      TW.renderSiteLinks($('linksList'), links);
     } else {
       $('linksBar').hidden = true;
     }
@@ -202,7 +200,11 @@
   }
 
   function renderGrid() {
-    const list = ALL.filter(matches);
+    // 筛选后仍保持：置顶优先 → 日期新→旧
+    const list = ALL.filter(matches).sort((a, b) => {
+      if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
     if (!list.length) {
       grid.innerHTML = emptyHTML(ALL.length > 0);
       $('resultCount').textContent = '';
@@ -211,6 +213,7 @@
 
     // 只有在"没筛选、没搜索"的完整列表里才立头条 ——
     // 一旦用户在找东西，所有结果就该平权排列，不该有一个被放大。
+    // 头条优先给置顶文；没有置顶时，第一篇（最新）当头条。
     const isBrowsing = activeTag === '__all__' && !keyword;
     const lead = isBrowsing && list.length >= 2;
 

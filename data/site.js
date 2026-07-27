@@ -2,11 +2,11 @@
 window.SITE = {
   "name": {
     "zh": "DonVitsch",
-    "en": "Tang Weixi"
+    "en": "DonVitsch"
   },
   "tagline": {
-    "zh": "技术探索与个人随笔 · 把想清楚的事写下来",
-    "en": "Notes on technology, tools and everyday thinking"
+    "zh": "随笔，拾人牙慧罢了",
+    "en": "People love that chains."
   },
   "logo": "uploads/20260726-图像-5d3ayx.jpg",
   "logoText": "唐",
@@ -18,26 +18,30 @@ window.SITE = {
     {
       "icon": "github",
       "name": "GitHub",
-      "url": "https://github.com/",
+      "url": "https://github.com/DonVitsch",
+      "action": "open",
       "color": "#181717"
     },
     {
       "icon": "mail",
       "name": "邮箱",
-      "url": "mailto:hello@example.com",
+      "url": "donvitsch@gmail.com",
+      "action": "copy",
       "color": "#0ea5e9"
     },
     {
       "icon": "wechat",
       "name": "微信",
-      "url": "https://weixin.qq.com/",
+      "url": "donvitsch",
+      "action": "copy",
       "color": "#07c160"
     },
     {
-      "icon": "zhihu",
-      "name": "知乎",
-      "url": "https://www.zhihu.com/",
-      "color": "#0084ff"
+      "icon": "link",
+      "name": "唐朝(???)",
+      "url": "http://localhost:4323/404",
+      "action": "open",
+      "color": "#334155"
     }
   ],
   "tags": [
@@ -45,9 +49,10 @@ window.SITE = {
     "随笔",
     "工具",
     "思考",
-    "教程"
+    "教程",
+    "奇艺搞笑"
   ],
-  "about": "",
-  "url": "",
+  "about": "<p>你们好啊我是唐维西</p><p>我喜欢超低</p>",
+  "url": "donvitsch.blog",
   "friends": []
 };

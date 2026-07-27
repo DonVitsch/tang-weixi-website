@@ -2,25 +2,57 @@
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
   <title>DonVitsch</title>
-  <link>/</link>
-  <description>技术探索与个人随笔 · 把想清楚的事写下来</description>
+  <link>donvitsch.blog</link>
+  <description>随笔，拾人牙慧罢了</description>
   <language>zh-cn</language>
   <lastBuildDate>Mon, 27 Jul 2026 00:00:00 GMT</lastBuildDate>
+  <atom:link href="donvitsch.blog/feed.xml" rel="self" type="application/rss+xml"/>
   <item>
     <title>我出生了</title>
-    <link>/article.html?id=p20260727-0jeca</link>
+    <link>donvitsch.blog/article.html?id=p20260727-0jeca</link>
     <guid isPermaLink="false">p20260727-0jeca</guid>
     <pubDate>Sun, 26 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[Claude 德国支付漏洞事件]]></description>
-    <content:encoded><![CDATA[中午到晚上头12点，Claude 出现支付漏洞，可以绕过支付直接获取 max 20x 订阅。<div>有大神做了自动脚本，群主发了100个账号出来。</div><div>本网站就出自好几个账号接力做成的，主要模型是： Opus5 &amp; Fable 5</div><div><br></div>]]></content:encoded>
+    <content:encoded><![CDATA[中午到晚上头12点，Claude 出现支付漏洞，可以绕过支付获取 max 20x 订阅。<div><span style="font-size: 1.0625rem; letter-spacing: 0px;"><br></span></div><div><span style="font-size: 1.0625rem; letter-spacing: 0px;">有人做了支付油猴脚本，群主发了100个账号出来。</span></div><div>本网站就出自好几个账号接力做成的，主要模型是： Opus5 &amp; Fable 5</div><div>时间第二天上午10:00，还有人的账号可以使用。</div>]]></content:encoded>
   </item>
   <item>
-    <title>fbfq</title>
-    <link>/article.html?id=p20260726-nhjx4</link>
+    <title>唉最近老想写公众号了</title>
+    <link>donvitsch.blog/article.html?id=p20260727-gudpa</link>
+    <guid isPermaLink="false">p20260727-gudpa</guid>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <description><![CDATA[可是小心心太少了。浏览量太少了。好想痛骂🤬一番 classmates 啊。唉算了。快一个月没在学校了。真爽。]]></description>
+    <content:encoded><![CDATA[<p>可是小心心太少了。</p><p>浏览量太少了。</p><h1>好想痛骂🤬一番 classmates 啊。</h1><p><br></p><p><br></p><p>唉算了。</p><p>快一个月没在学校了。</p><p>真爽。</p>]]></content:encoded>
+  </item>
+  <item>
+    <title>肥八分钱</title>
+    <link>donvitsch.blog/article.html?id=p20260727-yqc4e</link>
+    <guid isPermaLink="false">p20260727-yqc4e</guid>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <description><![CDATA[把酒流逝]]></description>
+  </item>
+  <item>
+    <title>LyriAM</title>
+    <link>donvitsch.blog/article.html?id=p20260727-uvqps</link>
+    <guid isPermaLink="false">p20260727-uvqps</guid>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <description><![CDATA[基于 Swift 的 MacOS 歌词灵动岛 APP]]></description>
+    <content:encoded><![CDATA[<p>项目名字来源是 Lyricify，那个是给 spotify 用的歌词软件。</p><p>Apple Music 我没有找到成熟的类似软件。</p><p>B站找到了一些个人做的，是付费的。</p><p>那我为什么不自己做呢。</p>]]></content:encoded>
+  </item>
+  <item>
+    <title>谁想到给轮胎充气的？</title>
+    <link>donvitsch.blog/article.html?id=p20260727-a8y0g</link>
+    <guid isPermaLink="false">p20260727-a8y0g</guid>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <description><![CDATA[汽车被发明的时候一定是实心的轮胎。像那个捣蛋猪的木轮子。谁是第一个给轮胎打上气的？天才。]]></description>
+    <content:encoded><![CDATA[<p>汽车被发明的时候一定是实心的轮胎。</p><p>像那个捣蛋猪的木轮子。</p><p>谁是第一个给轮胎打上气的？</p><p>天才。</p>]]></content:encoded>
+  </item>
+  <item>
+    <title>我的考试自测网页</title>
+    <link>donvitsch.blog/article.html?id=p20260726-nhjx4</link>
     <guid isPermaLink="false">p20260726-nhjx4</guid>
     <pubDate>Sun, 26 Jul 2026 00:00:00 GMT</pubDate>
-    <description><![CDATA[test]]></description>
-    <content:encoded><![CDATA[<p>fbfq你好啊 fbfq</p>]]></content:encoded>
+    <description><![CDATA[期末刷题啊啊啊啊]]></description>
+    <content:encoded><![CDATA[<p><br></p><a class="bookmark" href="https://exam.donvitsch.blog"><span class="bm-title">考试自测</span><span class="bm-url">https://exam.donvitsch.blog</span></a>]]></content:encoded>
   </item>
 </channel>
 </rss>

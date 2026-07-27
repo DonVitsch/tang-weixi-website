@@ -70,8 +70,8 @@ function defaultDB() {
       about: '',                 // 「关于我」页面的正文（在后台编辑）
       footer: { zh: '© 2026 唐维西', en: '© 2026 Tang Weixi' },
       links: [
-        { name: 'GitHub', url: 'https://github.com/', icon: 'github', color: '#181717' },
-        { name: '邮箱', url: 'mailto:hello@example.com', icon: 'mail', color: '#0ea5e9' },
+        { name: 'GitHub', url: 'https://github.com/', icon: 'github', color: '#181717', action: 'open' },
+        { name: '邮箱', url: 'hello@example.com', icon: 'mail', color: '#0ea5e9', action: 'copy' },
       ],
       tags: ['技术', '随笔', '工具', '思考'],
       friends: [],               // 友链：[{ name, url, desc }]，在后台「网站设置」里编辑
@@ -315,7 +315,8 @@ function buildFeedAndSitemap(db, index) {
 }
 
 function sortArticles(a, b) {
-  if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;  // 置顶优先
+  // 置顶永远排在最前；同为置顶/非置顶时，日期新→旧
+  if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
   return String(b.date || '').localeCompare(String(a.date || ''));
 }
 

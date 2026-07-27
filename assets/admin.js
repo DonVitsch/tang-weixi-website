@@ -139,7 +139,8 @@
 
   function sorted() {
     return DB.articles.slice().sort((a, b) => {
-      if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
+      // 置顶永远排在最前；同为置顶/非置顶时，日期新→旧
+      if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
       return String(b.date || '').localeCompare(String(a.date || ''));
     });
   }
@@ -446,20 +447,52 @@
   }
 
   /* ------------------------------ 网站设置 ------------------------------ */
-  const ICON_OPTIONS = ['github', 'mail', 'wechat', 'bilibili', 'zhihu', 'x', 'xiaohongshu', 'rss', 'book', 'link'];
+  // 图标 key → 中文说明（仅用于下拉选项；真正显示在网站上的名字是「显示名称」那一栏）
+  const ICON_OPTIONS = [
+    ['github', 'GitHub'],
+    ['mail', '邮箱'],
+    ['wechat', '微信'],
+    ['bilibili', 'B站'],
+    ['zhihu', '知乎'],
+    ['x', 'X / Twitter'],
+    ['xiaohongshu', '小红书'],
+    ['rss', 'RSS'],
+    ['book', '书'],
+    ['link', '通用链接'],
+  ];
+
+  function defaultLinkAction(icon, url) {
+    const u = String(url || '').trim();
+    if (/^(https?:|mailto:|tel:)/i.test(u)) return 'open';
+    if (icon === 'mail' || icon === 'wechat') return 'copy';
+    if (u && u.indexOf('@') !== -1 && u.indexOf(' ') === -1) return 'copy';
+    return 'open';
+  }
 
   function openSiteSettings() {
     const s = DB.site || {};
     const links = JSON.parse(JSON.stringify(s.links || []));
     const tagList = (s.tags || []).slice();
 
-    const linkRow = (l, i) => `
-      <div class="link-row" data-i="${i}">
-        <select class="l-icon">${ICON_OPTIONS.map((o) => `<option value="${o}" ${l.icon === o ? 'selected' : ''}>${o}</option>`).join('')}</select>
-        <input class="l-name" value="${TW.escapeHTML(typeof l.name === 'string' ? l.name : (l.name && l.name.zh) || '')}" placeholder="显示名">
-        <input class="l-url" value="${TW.escapeHTML(l.url || '')}" placeholder="https://…">
-        <button class="del" title="删掉">×</button>
+    const linkRow = (l) => {
+      const name = typeof l.name === 'string' ? l.name : (l.name && l.name.zh) || '';
+      const action = l.action === 'copy' || l.action === 'open'
+        ? l.action
+        : defaultLinkAction(l.icon, l.url);
+      const urlPh = action === 'copy' ? '要复制的内容，如微信号 / 邮箱' : 'https://… 或 mailto:…';
+      return `
+      <div class="link-row">
+        <select class="l-icon" title="图标样式">${ICON_OPTIONS.map(([o, label]) =>
+          `<option value="${o}" ${l.icon === o ? 'selected' : ''}>${label}</option>`).join('')}</select>
+        <input class="l-name" type="text" value="${TW.escapeHTML(name)}" placeholder="显示名称（可随便改）" title="网站上显示的文字，随意填写">
+        <input class="l-url" type="text" value="${TW.escapeHTML(l.url || '')}" placeholder="${TW.escapeHTML(urlPh)}" title="打开模式填网址；复制模式填要复制的文字">
+        <select class="l-action" title="点击后的行为">
+          <option value="open" ${action === 'open' ? 'selected' : ''}>打开链接</option>
+          <option value="copy" ${action === 'copy' ? 'selected' : ''}>复制内容</option>
+        </select>
+        <button class="del" type="button" title="删掉">×</button>
       </div>`;
+    };
 
     const friends = JSON.parse(JSON.stringify(s.friends || []));
     const friendRow = (f) => `
@@ -521,10 +554,22 @@
             <div class="hint">以后网站上线了再填，用于生成 RSS 订阅和站点地图里的完整链接。本地使用不用管。</div>
           </div>
           <div class="field">
-            <label>首页那排图标链接（GitHub、邮箱、知乎…）</label>
+            <label>首页 / 关于页那排图标链接</label>
+            <div class="link-row link-row-head" aria-hidden="true">
+              <span>图标</span>
+              <span>显示名称</span>
+              <span>链接 / 复制内容</span>
+              <span>点击行为</span>
+              <span></span>
+            </div>
             <div id="linkRows">${links.map(linkRow).join('')}</div>
             <button class="btn btn-sm" id="addLink" type="button" style="margin-top:8px">+ 加一个链接</button>
-            <div class="hint">左边选图标样式，中间填显示的名字，右边填网址。邮箱请写成 mailto:你的@邮箱.com</div>
+            <div class="hint">
+              <strong>显示名称</strong>可随便改（比如「我的邮箱」「加微信」）。
+              <strong>点击行为</strong>每条单独设：
+              「打开链接」会跳转；「复制内容」点一下把右边那栏复制到剪贴板（适合微信、邮箱）。
+              邮箱复制模式直接填 <code>you@mail.com</code> 即可，不必写 mailto:。
+            </div>
           </div>
           <div class="field">
             <label>标签库（教程 / 工具 / 随笔…）</label>
@@ -590,12 +635,46 @@
     };
     paintTags();
 
+    function bindLinkRows() {
+      mask.querySelectorAll('.link-row:not(.link-row-head)').forEach((row) => {
+        const iconSel = row.querySelector('.l-icon');
+        const actionSel = row.querySelector('.l-action');
+        const urlInput = row.querySelector('.l-url');
+        const nameInput = row.querySelector('.l-name');
+        const syncPlaceholder = () => {
+          if (!urlInput || !actionSel) return;
+          urlInput.placeholder = actionSel.value === 'copy'
+            ? '要复制的内容，如微信号 / 邮箱'
+            : 'https://… 或 mailto:…';
+        };
+        if (actionSel && !actionSel._bound) {
+          actionSel._bound = true;
+          actionSel.addEventListener('change', syncPlaceholder);
+        }
+        // 换图标时：若显示名还空，用图标中文名填一下；微信/邮箱默认倾向「复制」
+        if (iconSel && !iconSel._bound) {
+          iconSel._bound = true;
+          iconSel.addEventListener('change', () => {
+            const opt = ICON_OPTIONS.find(([k]) => k === iconSel.value);
+            if (nameInput && !nameInput.value.trim() && opt) nameInput.value = opt[1];
+            if (actionSel && (iconSel.value === 'mail' || iconSel.value === 'wechat')) {
+              actionSel.value = 'copy';
+            }
+            syncPlaceholder();
+          });
+        }
+        syncPlaceholder();
+      });
+    }
+
     mask.querySelector('#addLink').addEventListener('click', () => {
       const rows = mask.querySelector('#linkRows');
       const div = document.createElement('div');
-      div.innerHTML = linkRow({ icon: 'link', name: '', url: '' }, rows.children.length);
+      div.innerHTML = linkRow({ icon: 'link', name: '', url: '', action: 'open' });
       rows.appendChild(div.firstElementChild);
       bindDel();
+      bindLinkRows();
+      rows.lastElementChild.querySelector('.l-name').focus();
     });
 
     mask.querySelector('#addFriend').addEventListener('click', () => {
@@ -613,6 +692,7 @@
       });
     }
     bindDel();
+    bindLinkRows();
 
     const logoInput = document.createElement('input');
     logoInput.type = 'file'; logoInput.accept = 'image/*';
@@ -637,12 +717,17 @@
         url: mask.querySelector('#sUrl').value.trim().replace(/\/+$/, ''),
         logo: logoSel === '__img' ? (logoImg || 'github') : logoSel,
         logoText: mask.querySelector('#sLogoText').value.trim() || '唐',
-        links: [...mask.querySelectorAll('.link-row')].map((r) => ({
-          icon: r.querySelector('.l-icon').value,
-          name: r.querySelector('.l-name').value.trim(),
-          url: r.querySelector('.l-url').value.trim(),
-          color: brandColor(r.querySelector('.l-icon').value),
-        })).filter((l) => l.url && l.name),
+        links: [...mask.querySelectorAll('.link-row:not(.link-row-head)')].map((r) => {
+          const icon = r.querySelector('.l-icon').value;
+          const action = r.querySelector('.l-action').value === 'copy' ? 'copy' : 'open';
+          return {
+            icon,
+            name: r.querySelector('.l-name').value.trim(),
+            url: r.querySelector('.l-url').value.trim(),
+            action,
+            color: brandColor(icon),
+          };
+        }).filter((l) => l.url && l.name),
         friends: [...mask.querySelectorAll('.friend-row')].map((r) => ({
           name: r.querySelector('.f-name').value.trim(),
           url: r.querySelector('.f-url').value.trim(),

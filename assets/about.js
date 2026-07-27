@@ -24,15 +24,8 @@
     else if (logo === 'text') avatar.innerHTML = '<div class="logo-mark is-text">' + TW.escapeHTML(SITE.logoText || name.charAt(0)) + '</div>';
     else avatar.innerHTML = '<img class="logo-image" src="' + TW.escapeHTML(logo) + '" alt="' + TW.escapeHTML(name) + '">';
 
-    // 社交链接
-    const links = SITE.links || [];
-    $('aboutLinks').innerHTML = links.map((l) => `
-      <li class="links-bar-item">
-        <a href="${TW.escapeHTML(l.url)}" target="_blank" rel="noopener">
-          <span class="links-bar-icon" style="background:${TW.escapeHTML(l.color || '#334155')}">${TW.icon(l.icon)}</span>
-          <span class="links-bar-name">${TW.escapeHTML(TW.pick(l.name))}</span>
-        </a>
-      </li>`).join('');
+    // 社交链接（支持「打开」或「复制」两种模式）
+    TW.renderSiteLinks($('aboutLinks'), SITE.links || []);
 
     // 正文
     const about = TW.pick(SITE.about);
