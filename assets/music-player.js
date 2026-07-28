@@ -97,7 +97,6 @@
             '<svg class="jp-ico-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>' +
           '</button>' +
         '</div>' +
-        '<p class="jp-hint">滚动或点击页面即可开声</p>' +
       '</div>'
     );
   }
@@ -134,7 +133,6 @@
   var volBtn     = root.querySelector('.jp-vol');
   var volIco     = root.querySelector('.jp-ico-vol');
   var muteIco    = root.querySelector('.jp-ico-mute');
-  var hintEl     = root.querySelector('.jp-hint');
   var playIco    = root.querySelector('.jp-ico-play');
   var pauseIco   = root.querySelector('.jp-ico-pause');
   var artEl      = root.querySelector('.jp-art');
@@ -189,9 +187,10 @@
   }
 
   function syncPlayIcon() {
-    var playing = !audio.paused && !audio.ended;
-    playIco.style.display  = playing ? 'none' : '';
-    pauseIco.style.display = playing ? '' : 'none';
+    // 静音播放中也显示「播放」图标，提示用户点一下出声
+    var audible = !audio.paused && !audio.ended && !audio.muted;
+    playIco.style.display  = audible ? 'none' : '';
+    pauseIco.style.display = audible ? '' : 'none';
   }
 
   function setProgress(pct) {
@@ -288,13 +287,11 @@
     started = true;
     root.classList.add('is-playing');
     syncPlayIcon();
-    if (hintEl) hintEl.hidden = true;
     if (withSound) {
       markUnlocked();
       audio.muted = false;
       audio.volume = lastVol || 0.75;
       setMutedUI(false);
-      disarmGesture();
     }
     persistNow();
   }
@@ -316,37 +313,17 @@
       root.classList.add('is-playing');
       syncPlayIcon();
       setMutedUI(true);
-      if (hintEl) {
-        hintEl.hidden = false;
-        hintEl.textContent = '滚动或点击任意处即可开声';
-      }
-      armGestureUnlock();
       persistNow();
       return true;
     });
   }
 
-  function tryUnmute() {
-    audio.muted = false;
-    audio.volume = lastVol || 0.75;
-    return audio.play().then(function () {
-      if (audio.muted) return false;
-      onPlayingOk(true);
-      return true;
-    }).catch(function () {
-      audio.muted = true;
-      return false;
-    });
-  }
-
   function kickPlay() {
-    if (soundUnlocked) {
-      return playWithSound().catch(function () {
-        return playMuted().then(function () { return tryUnmute(); });
-      });
-    }
+    // 非手势上下文（页面加载 / 切回前台）：先试有声，被浏览器策略拦就静音播放并等手势。
+    // ⚠️ 这里绝不在 promise 链里调 tryUnmute —— audio.play() 对已在播放的音频会立即 resolve，
+    //    会误判"开声成功"并 disarm 手势监听，导致后续滚动 / 点击再没反应。
     return playWithSound().catch(function () {
-      return playMuted().then(function () { return tryUnmute(); });
+      return playMuted();
     });
   }
 
@@ -356,7 +333,6 @@
     wantSound = true;
     audio.muted = false;
     audio.volume = lastVol || 0.75;
-    if (hintEl) hintEl.hidden = true;
     return audio.play().then(function () {
       onPlayingOk(true);
     }).catch(function () {
@@ -373,7 +349,17 @@
   }
 
   function toggle() {
-    if (audio.paused) play(); else pause();
+    if (audio.paused) play();            // 没在播：开始
+    else if (audio.muted) unmuteNow();   // 静音播放中：点一下开声
+    else pause();                        // 有声播放中：暂停
+  }
+
+  // 在播放按钮点击（用户手势）里调用：直接取消静音出声
+  function unmuteNow() {
+    audio.muted = false;
+    if (!audio.volume) audio.volume = lastVol || 0.75;
+    wantSound = true;
+    onPlayingOk(true);
   }
 
   // ---- 随机队列 ----
@@ -416,29 +402,45 @@
     load(pi, { autoplay: true, time: 0 });
   }
 
-  // ---- 手势解锁（滚动 / 点击 / 触控 / 键盘）----
+  // ---- 手势解锁（点击 / 按键 / 触摸）----
+  // 只挂真正算用户激活的事件；滚动（wheel/scroll）在多数浏览器不算媒体手势激活，
+  // 且容易在非手势上下文误触发，已移除。点击页面任意处或播放键即可开声。
+  var GESTURE_TYPES = [
+    'pointerdown', 'mousedown', 'click',
+    'keydown', 'touchstart'
+  ];
+
   function onUserGesture(e) {
-    // 播放器内部交互（拖进度条、按按钮）不触发兜底开声，避免误触
+    // 播放器内部交互（拖进度条、按按钮）不触发兜底开声
     if (e && e.target && root && root.contains(e.target)) return;
+    // 已在有声播放：收工
     if (!audio.paused && !audio.muted && audio.volume > 0) {
       disarmGesture();
       return;
     }
-    if (!audio.paused) {
-      tryUnmute();
-      return;
+    // 能进到这里都是真实用户手势：在手势的同步上下文里直接取消静音，
+    // 浏览器才会放行出声（非手势上下文里 unmute 会被自动暂停 / 抑制）。
+    audio.muted = false;
+    if (!audio.volume) audio.volume = lastVol || 0.75;
+    wantSound = true;
+    if (audio.paused) {
+      // 还没开始播：手势内启动（有声）
+      var p = audio.play();
+      if (p && p.then) {
+        p.then(function () { onPlayingOk(true); }).catch(function () { playMuted(); });
+      } else {
+        onPlayingOk(true);
+      }
+    } else {
+      // 静音播放中：手势内取消静音即出声
+      onPlayingOk(true);
     }
-    if (shouldPlay || started) kickPlay();
   }
 
   function armGestureUnlock() {
     if (gestureArmed) return;
     gestureArmed = true;
-    var types = [
-      'pointerdown', 'touchstart', 'mousedown', 'click',
-      'keydown', 'wheel', 'scroll', 'mousemove', 'touchmove'
-    ];
-    types.forEach(function (t) {
+    GESTURE_TYPES.forEach(function (t) {
       window.addEventListener(t, onUserGesture, { capture: true, passive: true });
       document.addEventListener(t, onUserGesture, { capture: true, passive: true });
     });
@@ -447,11 +449,7 @@
   function disarmGesture() {
     if (!gestureArmed) return;
     gestureArmed = false;
-    var types = [
-      'pointerdown', 'touchstart', 'mousedown', 'click',
-      'keydown', 'wheel', 'scroll', 'mousemove', 'touchmove'
-    ];
-    types.forEach(function (t) {
+    GESTURE_TYPES.forEach(function (t) {
       window.removeEventListener(t, onUserGesture, true);
       document.removeEventListener(t, onUserGesture, true);
     });
@@ -603,8 +601,8 @@
       if (pendingSeek != null) persistNow(pendingSeek); else persistNow();
     }
     if (document.visibilityState === 'visible') {
+      // 切回前台没有手势，只能续静音播放；真正开声等下一次用户手势
       if (audio.paused && shouldPlay) kickPlay();
-      else if (!audio.paused && audio.muted && wantSound) tryUnmute();
     }
   });
 
@@ -641,7 +639,8 @@
     [200, 600, 1200, 2400, 4000].forEach(function (ms) {
       setTimeout(function () {
         if (!audio.paused && !audio.muted) return;
-        if (!audio.paused && audio.muted) { tryUnmute(); return; }
+        // 只在确实没播起来时重试 kickPlay（会落回静音播放）；
+        // 不要在这里 tryUnmute（非手势，会误判 + disarm）
         if (audio.paused && shouldPlay) {
           if (pendingSeek != null) tryApplySeek();
           kickPlay();
