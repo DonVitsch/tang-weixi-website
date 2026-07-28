@@ -48,6 +48,11 @@ const MIME = {
   '.xml': 'application/xml; charset=utf-8',
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.zip': 'application/zip',
+  '.mp3': 'audio/mpeg',
+  '.m4a': 'audio/mp4',
+  '.flac': 'audio/flac',
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav',
 };
 
 function ensureDirs() {
@@ -207,7 +212,9 @@ function makeBust(db) {
  * 每次保存文章 / 推送上线都会刷新，避免被浏览器死缓存。
  */
 function stampHtml(bust) {
-  const re = /(href|src)="((?:assets|data)\/[^"?#]+)"/g;
+  // 注意 (?:\?v=[^"]*)? 这段：要能匹配「已经带过版本号」的链接，
+  // 否则第一次盖过之后，再盖就匹配不到、版本号永远停在旧值
+  const re = /(href|src)="((?:assets|data)\/[^"?#]+)(?:\?v=[^"]*)?"/g;
   fs.readdirSync(ROOT).filter((f) => f.endsWith('.html')).forEach((f) => {
     const fp = path.join(ROOT, f);
     let html = fs.readFileSync(fp, 'utf8');
@@ -626,7 +633,7 @@ async function handleAPI(req, res, pathname) {
 // db.json.broken-xxx 之类的变体写法也一律拦住。
 const PRIVATE_NAMES = /^(db\.json|admin-pass\.json|auth-tokens\.json)(\..*)?$/;
 
-function serveStatic(res, pathname) {
+function serveStatic(req, res, pathname) {
   const deny = () => send(res, 403, '禁止访问', 'text/plain; charset=utf-8');
   let rel;
   try {
@@ -653,7 +660,62 @@ function serveStatic(res, pathname) {
       return send(res, 404, '找不到页面：' + rel, 'text/plain; charset=utf-8');
     }
     const type = MIME[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store' });
+    const total = st.size;
+
+    // 缓存策略：带 ?v= 的是版本号资源，可永久缓存；
+    // 音频 / 图片等不变资源缓存 1 小时（跨页续播时能直接命中缓存）；
+    // HTML 走协商缓存，改完立即生效。
+    const hasVersion = /\?v=/.test(req.url || '');
+    const ext = path.extname(filePath).toLowerCase();
+    let cacheControl;
+    if (hasVersion) cacheControl = 'public, max-age=31536000, immutable';
+    else if (ext === '.html') cacheControl = 'no-cache';
+    else cacheControl = 'public, max-age=3600';
+
+    // —— HTTP Range 支持：音频 / 视频 seek 必需 ——
+    // 没有分段返回，浏览器就无法定位到中间某个时间点，
+    // 进度条拖动会失效、跨页续播也只能从 0 开始。
+    const rangeHeader = req.headers['range'] || req.headers['Range'];
+    if (rangeHeader && /^bytes=\d*-\d*$/i.test(rangeHeader)) {
+      const m = /^bytes=(\d*)-(\d*)$/i.exec(rangeHeader);
+      let start, end;
+      if (m[1] === '') {
+        // bytes=-N：取最后 N 字节
+        const suffix = parseInt(m[2], 10);
+        start = Math.max(0, total - suffix);
+        end = total - 1;
+      } else {
+        start = parseInt(m[1], 10);
+        end = m[2] === '' ? total - 1 : parseInt(m[2], 10);
+      }
+      if (!isFinite(start) || !isFinite(end) || start > end || start >= total || end >= total) {
+        res.writeHead(416, {
+          'Content-Range': 'bytes */' + total,
+          'Accept-Ranges': 'bytes',
+          'Cache-Control': cacheControl,
+        });
+        return res.end();
+      }
+      const chunkSize = end - start + 1;
+      res.writeHead(206, {
+        'Content-Type': type,
+        'Content-Length': String(chunkSize),
+        'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': cacheControl,
+      });
+      fs.createReadStream(filePath, { start, end }).pipe(res);
+      return;
+    }
+
+    // 无 Range 请求：整文件返回，但仍声明可分片并给出 Content-Length，
+    // 这样浏览器能算出音频时长，后续 seek 才不会跳回开头。
+    res.writeHead(200, {
+      'Content-Type': type,
+      'Content-Length': String(total),
+      'Accept-Ranges': 'bytes',
+      'Cache-Control': cacheControl,
+    });
     fs.createReadStream(filePath).pipe(res);
   });
 }
@@ -669,7 +731,7 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
-  serveStatic(res, url.pathname);
+  serveStatic(req, res, url.pathname);
 });
 
 function listen(port, attempt = 0) {

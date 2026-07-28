@@ -80,6 +80,12 @@ window.TWEditor = (function () {
   const OWN_CLASSES = [
     'callout', 'callout-emoji', 'callout-body', 'todo', 'todo-text', 'done',
     'article-toc', 'chart-data', 'data-table', 'mention', 'bookmark', 'bm-title', 'bm-url',
+    // 字体
+    'f-serif', 'f-mono', 'f-kai',
+    // 文字颜色
+    'tc-red', 'tc-orange', 'tc-green', 'tc-blue', 'tc-purple', 'tc-gray',
+    // 高亮颜色
+    'hl-yellow', 'hl-green', 'hl-blue', 'hl-pink', 'hl-orange',
   ];
 
   function ownClassOf(node) {
@@ -392,11 +398,12 @@ window.TWEditor = (function () {
 
     function pickImage() { fileInput.click(); }
 
-    function figureNode(url, caption) {
+    function figureNode(url, caption, width = '100%', height = '') {
       const f = el('figure');
       f.innerHTML =
-        '<img src="' + url + '" alt="" contenteditable="false">' +
-        '<figcaption data-placeholder="加一句图片说明（可留空）">' + (caption || '') + '</figcaption>';
+        '<img src="' + url + '" alt="" contenteditable="false" style="max-width:100%;height:auto;" data-original-width="' + width + '">' +
+        '<figcaption data-placeholder="加一句图片说明（可留空）">' + (caption || '') + '</figcaption>' +
+        '<button class="image-size-btn" contenteditable="false" title="设置图片尺寸">⚙️</button>';
       return f;
     }
 
@@ -409,7 +416,7 @@ window.TWEditor = (function () {
 
       upload(file)
         .then((url) => {
-          const f = figureNode(url, '');
+          const f = figureNode(url, '', '100%');
           replaceBlock(holder, f);
           const p = insertAfter(f, el('p', '', '<br>'));
           placeCaret(p, true);
@@ -570,7 +577,46 @@ window.TWEditor = (function () {
       '✨ ⭐ 🌟 🔥 💥 ⚡ 🌈 ☀️ 🌙 ☁️ ❄️ 🌸 🌱 🍀 🌊 🎉 🎊 🎁 ' +
       '✅ ❌ ⚠️ ❗ ❓ 💡 📌 📍 🔖 🔗 📎 ✏️ 📝 📖 📚 📅 ⏰ 🧭 ' +
       '💻 🖥 ⌨️ 🖱 📱 📷 🎧 🎮 🛠 🔧 ⚙️ 🧪 🚀 ✈️ 🚗 🏠 🏔 🎯 ' +
-      '☕ 🍵 🍜 🍞 🍎 🍊 🍋 🍉 🎂 🍫 🐱 🐶 🐼 🦊 🐣 🦄 🐢 🐟'
+      '☕ 🍵 🍜 🍞 🍎 🍊 🍋 🍉 🎂 🍫 🐱 🐶 🐼 🦊 🐣 🦄 🐢 🐟 ' +
+      '😃 😆 😉 😋 😏 😐 😑 😶 😶‍🌫️ 😒 😓 😔 😕 😖 😗 😘 😙 😚 ' +
+      '😛 😜 😝 😞 😟 😠 😡 😢 😣 😥 😦 😧 😨 😩 😪 😫 😬 😮 ' +
+      '😯 😰 😱 😲 😳 😵 😷 😸 😹 😺 😻 😼 😽 😾 😿 👋 👌 👐 ' +
+      '👑 👒 👓 👔 👕 👖 👗 👘 👙 👚 👛 👜 👝 👞 👟 👠 👡 👢 ' +
+      '👣 👤 👥 💕 💖 💗 💘 💝 💞 💟 💠 💢 💣 💤 💦 💧 💨 💩 ' +
+      '💫 💬 💭 💮 💯 😂 🤤 🤥 🤦 🤧 🤨 🤪 🤫 🤬 🤭 🤮 🤰 🤱 ' +
+      '🤲 🤳 🤴 🤵 🤶 🤷 🤸 🤹 🤺 🤼 🤽 🤾 🤿 🥀 🥁 🥂 🥃 🥄 ' +
+      '🥅 🥆 🥇 🥈 🥉 🥊 🥋 🥌 🥍 🥎 🥏 🥐 🥑 🥒 🥓 🥔 🥕 🥖 ' +
+      '🥗 🥘 🥙 🥚 🥛 🥜 🥝 🥞 🌑 🌒 🌔 🌕 🌖 🌗 🌘 🌚 🌛 🌜 ' +
+      '🌝 🌞 🌠 🌡 🌢 🌣 🌤 🌥 🌦 🌧 🌨 🌩 🌪 🌫 🌬 🌭 🌮 🌯 ' +
+      '🌰 🌲 🌳 🌴 🌵 🌶 🌷 🌹 🌺 🌻 🌼 🌽 🌾 🌿 🎀 🎃 🎄 🎅 ' +
+      '🎆 🎇 🎈 🎋 🎌 🎍 🎎 🎏 🎐 🎑 🎒 🎓 🎔 🎕 🎖 🎗 🎘 🎙 ' +
+      '🎚 🎛 🎜 🎝 🎞 🎟 🎠 🎡 🎢 🎣 🎤 🎥 🎦 🎨 🎩 🎪 🎫 🎬 ' +
+      '🎭 🎰 🎱 🎲 🎳 🎴 🎵 🎶 🎷 🎸 🎹 🎺 🎻 🎼 🎽 🎾 🎿 ⛅ ' +
+      '⛈ 🌤️ 🌥️ 🌦️ 🌧️ 🌨️ 🌩️ 🌪️ 🌫️ 🌬️ 🌍 🌎 🌏 🌐 🦋 🦅 🦆 🦇 ' +
+      '🦈 🦉 🦌 🦍 🦎 🦏 🦑 🦒 🦓 🦔 🦕 🦖 🦗 🦘 🦙 🦚 🦛 🦜 ' +
+      '🦝 🦞 🦟 🦠 💰 💱 💲 💳 💴 💵 💶 💷 💸 💹 💺 💼 💽 💾 ' +
+      '💿 📀 📁 📂 📃 📄 📆 📇 📈 📉 📊 📋 📏 📐 📑 📒 📓 📔 ' +
+      '📕 📗 📘 📙 📛 📜 📞 📟 📠 📡 📢 📣 📤 📥 📦 📧 📨 📩 ' +
+      '📪 📫 📬 📭 📮 📯 📲 📳 📴 📵 📶 📸 📹 📺 📻 📼 📽 📾 ' +
+      '📿 🗂 🗃 🗄 🗅 🗆 🗇 🗈 🗉 🗊 🗋 🗌 🗍 🗎 🗏 🗐 🗑 🗒 ' +
+      '🗓 🗔 🗕 🗖 🗗 🗘 🗙 🗚 🗛 🗜 🗝 🗞 🗟 🗠 🗡 🗢 🗣 🗤 ' +
+      '🗥 🗦 🗧 🗨 🗩 🗪 🗫 🗬 🗭 🗮 🗯 🗰 🗱 🗲 🗳 🗴 🗵 🗶 ' +
+      '🗷 🗸 🗹 🗺 🔀 🔁 🔂 🔃 🔄 🔅 🔆 🔇 🔈 🔉 🔊 🔋 🔌 🔍 ' +
+      '🔎 🔏 🔐 🔑 🔒 🔓 🔔 🔕 🔘 🔙 🔚 🔛 🔜 🔝 🔞 🔟 🔠 🔡 ' +
+      '🔢 🔣 🔤 🔦 🔨 🔩 🔪 🔫 🔬 🔮 🔯 🔰 🔱 🔲 🔳 🔴 🔵 🔶 ' +
+      '🔷 🔸 🔹 🔺 🔻 🔼 🔽 🕧 🕛 🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 ' +
+      '🕙 🕚 🏡 🏢 🏣 🏤 🏥 🏦 🏨 🏩 🏪 🏫 🏬 🏭 🏮 🏯 🏰 🏱 ' +
+      '🏲 🏳 🏴 🏵 🏶 🏷 🏸 🏹 🏺 🏻 🏼 🏽 🏾 🏿 🍏 🍐 🍑 🍒 ' +
+      '🍓 🍔 🍕 🍖 🍗 🍘 🍙 🍚 🍛 🍝 🍟 🍠 🍡 🍢 🍣 🍤 🍥 🍦 ' +
+      '🍧 🍨 🍩 🍪 🍬 🍭 🍮 🍯 🍰 🍱 🍲 🍳 🍴 🍶 🍷 🍸 🍹 🍺 ' +
+      '🍻 🍼 🍽 🍾 🍿 🚁 🚂 🚃 🚄 🚅 🚆 🚇 🚈 🚉 🚊 🚋 🚌 🚍 ' +
+      '🚎 🚏 🚐 🚑 🚒 🚓 🚔 🚕 🚖 🚘 🚙 🚚 🚛 🚜 🚝 🚞 🚟 🚠 ' +
+      '🚡 🚢 🚣 🚤 🚥 🚦 🚧 🚨 🚩 🚪 🚫 🚬 🚭 🚮 🚯 🚰 🚱 🚲 ' +
+      '🚳 🚴 🚵 🚶 🚷 🚸 🚹 🚺 🚻 🚼 🚽 🚾 🚿 🛀 🛁 🛂 🛃 🛄 ' +
+      '🛅 🛆 🛇 🛈 🛉 🛊 🛋 🛌 🛍 🛎 🛏 🛐 🛑 🛒 🛓 🛔 🛕 🛖 ' +
+      '🛗 🛘 🛙 🛚 🛛 🛜 🛝 🛞 🛟 🛡 🛢 🛣 🛤 🛥 🛦 🛧 🛨 🛩 ' +
+      '🛪 🛫 🛬 🛰 🛭 🛮 🛯 🛱 🛲 🛳 🛴 🛵 🛶 🛷 🛸 🛹 🛺 🛻 ' +
+      '🛼 🛽 🛾 🛿 '
     ).split(/\s+/).filter(Boolean);
 
     const emojiPanel = el('div', 'tw-emoji');
@@ -578,17 +624,42 @@ window.TWEditor = (function () {
     document.body.appendChild(emojiPanel);
 
     function openEmojiPanel() {
-      emojiPanel.innerHTML = EMOJIS.map((c) => `<button type="button" class="tw-emoji-item">${c}</button>`).join('');
+      // 用事件委托，避免给几百个按钮各绑一个监听器（之前卡顿的根源）
+      emojiPanel.innerHTML =
+        '<input type="text" class="emoji-search" placeholder="搜表情…" autocomplete="off">' +
+        '<div class="emoji-grid"></div>';
+      const grid = emojiPanel.querySelector('.emoji-grid');
+      // 用 DocumentFragment 一次性塞进去，比逐个 appendChild 快很多
+      const frag = document.createDocumentFragment();
+      EMOJIS.forEach((c) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = c;
+        b.dataset.emoji = c;
+        frag.appendChild(b);
+      });
+      grid.appendChild(frag);
       emojiPanel.hidden = false;
       positionPanel(emojiPanel);
-      emojiPanel.querySelectorAll('.tw-emoji-item').forEach((b) => {
-        // mousedown 防止编辑器丢失光标，插入才会落在原位置
-        b.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          document.execCommand('insertText', false, b.textContent);
-          emojiPanel.hidden = true;
-          changed();
+
+      const searchInput = emojiPanel.querySelector('.emoji-search');
+      searchInput.focus();
+      searchInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        grid.querySelectorAll('button').forEach((b) => {
+          b.hidden = q && b.dataset.emoji.indexOf(q) === -1;
         });
+      });
+
+      // 事件委托：点 grid 里任意按钮都插入对应 emoji
+      grid.addEventListener('mousedown', (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        e.preventDefault();
+        root.focus();   // 确保 execCommand 作用在编辑器里
+        document.execCommand('insertText', false, b.dataset.emoji);
+        changed();
+        emojiPanel.hidden = true;
       });
     }
 
@@ -645,7 +716,7 @@ window.TWEditor = (function () {
       setTimeout(() => search.focus(), 0);
     }
 
-    /** 把浮动面板摆到光标附近（放不下就翻到上面） */
+    /** 把浮动面板摆到光标附近（放不下就翻到上面，再放不下就贴边） */
     function positionPanel(panel) {
       const sel = window.getSelection();
       let rect = sel.rangeCount ? sel.getRangeAt(0).getBoundingClientRect() : null;
@@ -653,28 +724,175 @@ window.TWEditor = (function () {
       if (!rect) rect = root.getBoundingClientRect();
       const h = panel.offsetHeight || 260;
       const w = panel.offsetWidth || 300;
-      panel.style.left = Math.max(10, Math.min(rect.left, window.innerWidth - w - 10)) + 'px';
-      panel.style.top = (window.innerHeight - rect.bottom > h + 20 ? rect.bottom + 8 : rect.top - h - 8) + 'px';
+      const left = Math.max(10, Math.min(rect.left, window.innerWidth - w - 10));
+      panel.style.left = left + 'px';
+      // 优先放下面；下面放不下就放上面；两边都放不下就贴屏幕顶部
+      let top;
+      if (window.innerHeight - rect.bottom > h + 20) {
+        top = rect.bottom + 8;
+      } else if (rect.top > h + 20) {
+        top = rect.top - h - 8;
+      } else {
+        top = Math.max(10, Math.min(rect.bottom, window.innerHeight - h - 10));
+      }
+      panel.style.top = top + 'px';
+    }
+
+    function openImageSizeDialog(sizeBtn) {
+      const figure = sizeBtn.closest('figure');
+      const img = figure && figure.querySelector('img');
+      closePopovers();
+
+      const currentWidth = (img && img.getAttribute('data-original-width')) || '100%';
+      const pop = el('div', 'tw-popover image-size-dialog show');
+      pop.innerHTML =
+        '<div class="tw-pop-title">图片宽度</div>' +
+        '<div class="tw-pop-row">' +
+          '<input type="text" class="img-size-input" value="' + currentWidth + '" placeholder="如 80 或 100%">' +
+          '<select class="img-size-unit">' +
+            '<option value="%"' + (/%$/.test(currentWidth) || !/^\d+$/.test(currentWidth) ? ' selected' : '') + '>百分比</option>' +
+            '<option value="px"' + (/px$/i.test(currentWidth) ? ' selected' : '') + '>像素</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="tw-pop-hint">高度自动按比例。可填 50、80%、320px</div>' +
+        '<div class="tw-pop-actions">' +
+          '<button type="button" class="btn btn-sm img-size-reset">原始大小</button>' +
+          '<button type="button" class="btn btn-sm btn-primary img-size-ok">保存</button>' +
+        '</div>';
+      document.body.appendChild(pop);
+
+      const input = pop.querySelector('.img-size-input');
+      const unit = pop.querySelector('.img-size-unit');
+      input.focus(); input.select();
+
+      const apply = (raw) => {
+        if (!img) return;
+        let v = (raw == null ? input.value : raw).trim();
+        if (v === '') v = '100%';
+        // 纯数字 → 补单位
+        if (/^\d+(\.\d+)?$/.test(v)) v = v + unit.value;
+        img.setAttribute('data-original-width', v);
+        if (/px$/i.test(v)) { img.style.maxWidth = 'none'; img.style.width = v; }
+        else { img.style.maxWidth = v; img.style.width = ''; }
+        changed();
+      };
+      pop.querySelector('.img-size-ok').addEventListener('click', () => { apply(); closePopovers(); });
+      pop.querySelector('.img-size-reset').addEventListener('click', () => {
+        if (!img) { closePopovers(); return; }
+        img.setAttribute('data-original-width', '100%');
+        img.style.maxWidth = '100%'; img.style.width = '';
+        changed();
+        closePopovers();
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); apply(); closePopovers(); }
+        if (e.key === 'Escape') { closePopovers(); }
+      });
+      // 摆到齿轮按钮旁边（之前传的是整个 figure，大图时弹窗会跑到屏幕外）
+      positionNear(pop, sizeBtn);
+      // 阻止点击面板造成编辑器失焦
+      pop.addEventListener('mousedown', (e) => e.preventDefault());
+      activePopover = pop;
+    }
+
+    /* —— 通用弹出层（字体 / 颜色 / 图片尺寸共用一套） —— */
+    let activePopover = null;
+    function closePopovers() {
+      if (activePopover) { activePopover.remove(); activePopover = null; }
+    }
+    /** 把面板摆到某个元素附近，放不下就翻到上面 */
+    function positionNear(panel, anchor) {
+      const r = anchor.getBoundingClientRect();
+      const h = panel.offsetHeight || 200;
+      const w = panel.offsetWidth || 240;
+      panel.style.left = Math.max(10, Math.min(r.left, window.innerWidth - w - 10)) + 'px';
+      const below = window.innerHeight - r.bottom;
+      panel.style.top = (below > h + 12 ? r.bottom + 6 : Math.max(10, r.top - h - 6)) + 'px';
     }
 
     document.addEventListener('mousedown', (e) => {
-      if (!emojiPanel.hidden && !emojiPanel.contains(e.target)) emojiPanel.hidden = true;
-      if (!mentionPanel.hidden && !mentionPanel.contains(e.target)) mentionPanel.hidden = true;
+      if (!emojiPanel.hidden && !emojiPanel.contains(e.target) && !bar.contains(e.target)) emojiPanel.hidden = true;
+      if (!mentionPanel.hidden && !mentionPanel.contains(e.target) && !bar.contains(e.target)) mentionPanel.hidden = true;
+      // 点击弹出层外面时关掉字体 / 颜色 / 图片尺寸弹出层
+      if (activePopover && !activePopover.contains(e.target) && !bar.contains(e.target)) closePopovers();
+      // 图片齿轮的点击改由 root 的 click 监听器处理，更可靠
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { emojiPanel.hidden = true; mentionPanel.hidden = true; }
+      if (e.key === 'Escape') {
+        emojiPanel.hidden = true; mentionPanel.hidden = true;
+        closePopovers();
+      }
     });
 
     /* ============================ 选中格式工具条 ============================ */
+    // 字体选项（应用到当前块）
+    const FONTS = [
+      { cls: '',         label: '默认（无衬线）', sample: '永' },
+      { cls: 'f-serif',  label: '衬线体',         sample: '永' },
+      { cls: 'f-mono',   label: '等宽体',         sample: '永' },
+      { cls: 'f-kai',    label: '楷体',           sample: '永' },
+    ];
+    // 文字颜色
+    const TEXT_COLORS = [
+      { cls: '',          label: '默认', sw: 'transparent', none: true },
+      { cls: 'tc-red',    label: '红',   sw: '#dc2626' },
+      { cls: 'tc-orange', label: '橙',   sw: '#ea580c' },
+      { cls: 'tc-green',  label: '绿',   sw: '#16a34a' },
+      { cls: 'tc-blue',   label: '蓝',   sw: '#2563eb' },
+      { cls: 'tc-purple', label: '紫',   sw: '#7c3aed' },
+      { cls: 'tc-gray',   label: '灰',   sw: '#6b7280' },
+    ];
+    // 高亮颜色
+    const HL_COLORS = [
+      { cls: 'hl-yellow', label: '黄', sw: '#fde68a' },
+      { cls: 'hl-green',  label: '绿', sw: '#bbf7d0' },
+      { cls: 'hl-blue',   label: '蓝', sw: '#bfdbfe' },
+      { cls: 'hl-pink',   label: '粉', sw: '#fbcfe8' },
+      { cls: 'hl-orange', label: '橙', sw: '#fed7aa' },
+    ];
+
     const bar = el('div', 'tw-toolbar');
-    bar.hidden = true;
+    bar.hidden = true;                       // 默认隐藏，编辑器获得焦点才显示（避免密码门时浮在遮罩上）
+    bar.style.position = 'fixed';
+    bar.style.top = '18px';
+    bar.style.left = '50%';
+    bar.style.transform = 'translateX(-50%)';
+    bar.style.zIndex = '1500';               // 低于密码门(2000)，即使显示也被遮住
+    bar.style.minWidth = '420px';
+    bar.style.maxWidth = 'min(95vw, 980px)';
+    bar.style.background = 'var(--glass-thick)';
+    bar.style.border = '0.5px solid var(--glass-edge)';
+    bar.style.borderRadius = '999px';
+    bar.style.padding = '8px';
+    bar.style.display = 'flex';
+    bar.style.alignItems = 'center';
+    bar.style.gap = '10px';
+    bar.style.boxShadow = 'var(--shadow-dock)';
+
+    // 密码门弹出时（首次进后台 / token 过期），工具栏必须隐藏
+    function authMaskOpen() { return !!document.querySelector('.auth-mask'); }
+
+    // 对齐按钮的 SVG 图标（原来显示成文本 "AlignLeft"，看着像坏的）
+    const ico = (d) => '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
+    const ICO_AL = ico('<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/>');
+    const ICO_AC = ico('<line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/>');
+    const ICO_AR = ico('<line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/>');
+
     bar.innerHTML = [
       btn('bold', '<b>B</b>', '加粗 ⌘B'),
       btn('italic', '<i>I</i>', '斜体 ⌘I'),
       btn('underline', '<u>U</u>', '下划线 ⌘U'),
       btn('strike', '<s>S</s>', '删除线'),
       '<span class="tw-sep"></span>',
-      btn('mark', '<span style="background:#fde68a;padding:0 3px;border-radius:3px">A</span>', '高亮'),
+      btn('align-left', ICO_AL, '左对齐'),
+      btn('align-center', ICO_AC, '居中'),
+      btn('align-right', ICO_AR, '右对齐'),
+      '<span class="tw-sep"></span>',
+      btn('font', '<span class="tw-ico">字</span>', '字体'),
+      btn('textcolor', '<span class="tw-tc-ico">A<i class="tw-tc-bar"></i></span>', '文字颜色'),
+      btn('highlight', '<span class="tw-hl-ico">A</span>', '高亮颜色'),
+      '<span class="tw-sep"></span>',
+      btn('mark', '<span style="background:#fde68a;padding:0 3px;border-radius:3px">A</span>', '黄色高亮'),
       btn('code', '<code>&lt;&gt;</code>', '行内代码'),
       btn('link', '🔗', '加链接 ⌘K'),
       '<span class="tw-sep"></span>',
@@ -682,6 +900,9 @@ window.TWEditor = (function () {
       btn('h3', 'H3', '设为小标题'),
       btn('quote', '❝', '设为引用'),
       btn('clear', '⌫', '清除格式'),
+      '<span class="tw-sep"></span>',
+      btn('emoji', '😀', '表情'),
+      btn('mention', '📄', '提及文章'),
     ].join('');
     document.body.appendChild(bar);
 
@@ -693,7 +914,22 @@ window.TWEditor = (function () {
     bar.addEventListener('click', (e) => {
       const b = e.target.closest('.tw-tb');
       if (!b) return;
-      runCommand(b.dataset.cmd);
+      const cmd = b.dataset.cmd;
+      if (cmd === 'font')      { openFontPopover(b); return; }
+      if (cmd === 'textcolor') { openColorPopover(b); return; }
+      if (cmd === 'highlight') { openHighlightPopover(b); return; }
+      runCommand(cmd);
+    });
+
+    // 工具条显隐改为跟随编辑器焦点：输密码时编辑器拿不到焦点，工具条自然不显示
+    root.addEventListener('focus', () => { if (!authMaskOpen()) bar.hidden = false; });
+    root.addEventListener('blur', () => {
+      // 延时一下，给点工具条按钮 / 弹出层留出时间
+      setTimeout(() => {
+        const ae = document.activeElement;
+        if (ae && (root.contains(ae) || bar.contains(ae) || (activePopover && activePopover.contains(ae)))) return;
+        bar.hidden = true;
+      }, 160);
     });
 
     function runCommand(cmd) {
@@ -705,13 +941,21 @@ window.TWEditor = (function () {
         case 'mark': toggleWrap('MARK'); break;
         case 'code': toggleWrap('CODE'); break;
         case 'link': makeLink(); break;
+        case 'align-left': document.execCommand('justifyLeft'); break;
+        case 'align-center': document.execCommand('justifyCenter'); break;
+        case 'align-right': document.execCommand('justifyRight'); break;
         case 'h2': applyBlock('h2'); break;
         case 'h3': applyBlock('h3'); break;
         case 'quote': applyBlock('quote'); break;
         case 'clear':
           document.execCommand('removeFormat');
           unwrap('MARK'); unwrap('CODE');
+          unwrapClass(/^tc-/);          // 顺带清掉文字色
+          unwrapClass(/^hl-/);          // 顺带清掉高亮色
+          clearFontOnBlock();           // 顺带清掉块级字体
           break;
+        case 'emoji': openEmojiPanel(); break;
+        case 'mention': openMentionPanel(); break;
       }
       changed();
       updateToolbar();
@@ -753,33 +997,134 @@ window.TWEditor = (function () {
       if (a) { a.target = '_blank'; a.rel = 'noopener'; }
     }
 
-    function updateToolbar() {
+    /* —— 字体 / 颜色 —— */
+    // 当前光标所在的块（段落 / 标题 / 引用 / 列表项）
+    function currentBlock() {
       const sel = window.getSelection();
-      if (!sel || sel.isCollapsed || !sel.rangeCount || !root.contains(sel.anchorNode)) {
-        bar.hidden = true;
-        return;
+      if (!sel.rangeCount) return null;
+      let n = sel.getRangeAt(0).startContainer;
+      if (n.nodeType === 3) n = n.parentNode;
+      while (n && n !== root) {
+        if (/^(P|H1|H2|H3|H4|H5|BLOCKQUOTE|LI|PRE|DIV)$/.test(n.tagName)) return n;
+        n = n.parentNode;
       }
-      const rect = sel.getRangeAt(0).getBoundingClientRect();
-      if (!rect.width && !rect.height) { bar.hidden = true; return; }
-      bar.hidden = false;
-      const w = bar.offsetWidth || 380;
-      bar.style.left = Math.max(10, Math.min(rect.left + rect.width / 2 - w / 2, window.innerWidth - w - 10)) + 'px';
-      bar.style.top = (rect.top > 70 ? rect.top - bar.offsetHeight - 10 : rect.bottom + 10) + 'px';
-
-      ['bold', 'italic', 'underline'].forEach((c) => {
-        const b = bar.querySelector('[data-cmd="' + c + '"]');
-        if (b) b.classList.toggle('on', document.queryCommandState(c));
-      });
-      bar.querySelector('[data-cmd="mark"]').classList.toggle('on', !!closestTag('MARK'));
-      bar.querySelector('[data-cmd="code"]').classList.toggle('on', !!closestTag('CODE'));
-      bar.querySelector('[data-cmd="link"]').classList.toggle('on', !!closestTag('A'));
+      return null;
+    }
+    function clearFontOnBlock() {
+      const b = currentBlock();
+      if (b) ['f-serif', 'f-mono', 'f-kai'].forEach((c) => b.classList.remove(c));
+    }
+    function applyFont(cls) {
+      const b = currentBlock();
+      if (!b) return;
+      ['f-serif', 'f-mono', 'f-kai'].forEach((c) => b.classList.remove(c));
+      if (cls) b.classList.add(cls);
+      placeCaret(b, true);
+      changed();
+    }
+    // 用指定 class 包住当前选区（允许嵌套，内层覆盖外层）
+    function wrapInlineClass(cls) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      const node = document.createElement('span');
+      node.className = cls;
+      try {
+        node.appendChild(range.extractContents());
+        range.insertNode(node);
+        placeCaret(node, true);
+      } catch (e) { /* 跨块选择时忽略 */ }
+    }
+    // 找最近一个 class 满足前缀正则的祖先
+    function closestClass(prefixRegex) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return null;
+      let n = sel.getRangeAt(0).startContainer;
+      if (n.nodeType === 3) n = n.parentNode;
+      while (n && n !== root) {
+        if (n.classList && [...n.classList].some((c) => prefixRegex.test(c))) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+    function unwrapClass(prefixRegex) {
+      const n = closestClass(prefixRegex);
+      if (n) unwrapNode(n);
+    }
+    function applyTextColor(cls) {
+      unwrapClass(/^tc-/);          // 先去掉已有的文字色（整段去色，简单可靠）
+      if (cls) wrapInlineClass(cls);
+      changed();
+    }
+    function applyHighlight(cls) {
+      unwrapClass(/^hl-/);
+      unwrap('MARK');               // 顺手去掉黄色 <mark>
+      if (cls) wrapInlineClass(cls);
+      changed();
     }
 
-    document.addEventListener('selectionchange', () => {
-      if (document.activeElement !== root) { bar.hidden = true; return; }
-      updateToolbar();
-    });
+    /* —— 字体 / 颜色弹出层 —— */
+    function openFontPopover(anchorBtn) {
+      closePopovers();
+      const pop = el('div', 'tw-popover');
+      pop.innerHTML = FONTS.map((f) =>
+        '<button type="button" class="tw-pop-opt ' + f.cls + '" data-cls="' + f.cls + '">' +
+          '<span class="tw-pop-sample">' + f.sample + '</span>' +
+          '<span class="tw-pop-label">' + f.label + '</span>' +
+        '</button>').join('');
+      document.body.appendChild(pop);
+      pop.addEventListener('mousedown', (e) => e.preventDefault());
+      pop.querySelectorAll('.tw-pop-opt').forEach((o) =>
+        o.addEventListener('click', () => { applyFont(o.dataset.cls); closePopovers(); }));
+      activePopover = pop;
+      positionNear(pop, anchorBtn);
+    }
+    function openColorPopover(anchorBtn) {
+      closePopovers();
+      const pop = el('div', 'tw-popover tw-pop-palette');
+      pop.innerHTML = TEXT_COLORS.map((c) =>
+        '<button type="button" class="tw-pop-swatch' + (c.none ? ' is-none' : '') + '" data-cls="' + c.cls + '" title="' + c.label + '">' +
+          '<span class="tw-pop-chip" style="background:' + c.sw + '"></span>' +
+        '</button>').join('');
+      document.body.appendChild(pop);
+      pop.addEventListener('mousedown', (e) => e.preventDefault());
+      pop.querySelectorAll('.tw-pop-swatch').forEach((s) =>
+        s.addEventListener('click', () => { applyTextColor(s.dataset.cls); closePopovers(); }));
+      activePopover = pop;
+      positionNear(pop, anchorBtn);
+    }
+    function openHighlightPopover(anchorBtn) {
+      closePopovers();
+      const pop = el('div', 'tw-popover tw-pop-palette');
+      pop.innerHTML = HL_COLORS.map((c) =>
+        '<button type="button" class="tw-pop-swatch" data-cls="' + c.cls + '" title="' + c.label + '">' +
+          '<span class="tw-pop-chip" style="background:' + c.sw + '"></span>' +
+        '</button>').join('');
+      document.body.appendChild(pop);
+      pop.addEventListener('mousedown', (e) => e.preventDefault());
+      pop.querySelectorAll('.tw-pop-swatch').forEach((s) =>
+        s.addEventListener('click', () => { applyHighlight(s.dataset.cls); closePopovers(); }));
+      activePopover = pop;
+      positionNear(pop, anchorBtn);
+    }
 
+    function updateToolbar() {
+      const sel = window.getSelection();
+      const inEditor = !!(sel && sel.rangeCount && root.contains(sel.anchorNode));
+      // 密码门弹出时不要把工具条顶出来
+      if (authMaskOpen()) { bar.hidden = true; return; }
+      // 不再因选区折叠而隐藏工具条；显隐完全交给 focus / blur
+      bar.hidden = false;
+      ['bold', 'italic', 'underline'].forEach((c) => {
+        const b = bar.querySelector('[data-cmd="' + c + '"]');
+        if (b) b.classList.toggle('on', inEditor && document.queryCommandState(c));
+      });
+      bar.querySelector('[data-cmd="mark"]').classList.toggle('on', inEditor && !!closestTag('MARK'));
+      bar.querySelector('[data-cmd="code"]').classList.toggle('on', inEditor && !!closestTag('CODE'));
+      bar.querySelector('[data-cmd="link"]').classList.toggle('on', inEditor && !!closestTag('A'));
+    }
+
+    /* 工具条显隐改为跟随编辑器焦点，不再需要 selectionchange */
     /* ============================== 键盘处理 ============================== */
     root.addEventListener('keydown', (e) => {
       /* 菜单打开时，方向键由菜单接管 */
@@ -944,8 +1289,16 @@ window.TWEditor = (function () {
       changed();
     });
 
-    /* -------------------------- 标注框换图标 & 待办勾选 -------------------------- */
+    /* -------------------------- 标注框换图标 & 待办勾选 & 图片齿轮 -------------------------- */
     root.addEventListener('click', (e) => {
+      // 图片尺寸齿轮按钮 —— 用 root 的 click 比依赖 document mousedown 可靠
+      const sizeBtn = e.target.closest('.image-size-btn');
+      if (sizeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        openImageSizeDialog(sizeBtn);
+        return;
+      }
       const emoji = e.target.closest('.callout-emoji');
       if (emoji) {
         const i = CALLOUT_EMOJIS.indexOf(emoji.textContent.trim());
@@ -985,6 +1338,8 @@ window.TWEditor = (function () {
       box.querySelectorAll('[data-empty]').forEach((n) => n.removeAttribute('data-empty'));
       box.querySelectorAll('.uploading, .upload-error').forEach((n) => n.remove());
       box.querySelectorAll('[contenteditable]').forEach((n) => n.removeAttribute('contenteditable'));
+      // 齿轮按钮只是编辑器用的 UI，绝不能存进正文、带到阅读页
+      box.querySelectorAll('.image-size-btn').forEach((n) => n.remove());
       box.querySelectorAll('figcaption').forEach((n) => {
         n.removeAttribute('data-placeholder');
         if (!n.textContent.trim()) n.remove();
@@ -1014,6 +1369,16 @@ window.TWEditor = (function () {
       root.querySelectorAll('img').forEach((n) => n.setAttribute('contenteditable', 'false'));
       root.querySelectorAll('.callout-emoji').forEach((n) => n.setAttribute('contenteditable', 'false'));
       root.querySelectorAll('.mention, a.bookmark').forEach((n) => n.setAttribute('contenteditable', 'false'));
+      // 给每个 figure 补上齿轮按钮（旧正文里可能没有），同时保证只有一个
+      root.querySelectorAll('figure').forEach((f) => {
+        f.querySelectorAll('.image-size-btn').forEach((n) => n.remove());
+        const g = document.createElement('button');
+        g.className = 'image-size-btn';
+        g.setAttribute('contenteditable', 'false');
+        g.title = '设置图片尺寸';
+        g.textContent = '⚙️';
+        f.appendChild(g);
+      });
       root.querySelectorAll('details').forEach((n) => n.setAttribute('open', ''));   // 编辑时全展开，免得内容藏着改不到
       ensureTrailingParagraph();
       paintPlaceholders();

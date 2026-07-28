@@ -1081,16 +1081,18 @@
     TW.initTheme();
     TW.initLang(null);
 
-    editor = TWEditor.create($('editor'), {
-      upload: uploadFile,
-      onChange: () => { updateStats(); markDirty(); },
-    });
-
     initCover();
     bindEvents();
 
     try {
+      // 先把密码门过了，再创建编辑器 —— 否则工具栏会浮在密码门之上
       await ensureAuth();
+
+      editor = TWEditor.create($('editor'), {
+        upload: uploadFile,
+        onChange: () => { updateStats(); markDirty(); },
+      });
+
       const res = await api('/api/db');
       DB = res.db;
       DB.articles = DB.articles || [];

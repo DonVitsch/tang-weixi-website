@@ -12,10 +12,10 @@
 <link rel="alternate" type="application/rss+xml" title="唐维西" href="feed.xml">
 <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="assets/favicon.svg?v=e777ea446e" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=e777ea446e">
-<link rel="manifest" href="site.webmanifest?v=8d07f98865">
-<link rel="stylesheet" href="assets/style.css?v=e777ea446e">
+<link rel="icon" href="assets/favicon.svg?v=762a8f5218" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=762a8f5218">
+<link rel="manifest" href="site.webmanifest?v=762a8f5218">
+<link rel="stylesheet" href="assets/style.css?v=762a8f5218">
 </head>
 <body data-theme="light">
 
@@ -50,7 +50,7 @@
 
 <div class="container" id="top">
 
-  <!-- 身份面板 -->
+  <!-- 身份面板 + Apple Music 风格爵士乐播放器 -->
   <header class="hero">
     <div class="hero-panel">
       <div class="hero-avatar">
@@ -61,6 +61,56 @@
         <h1 class="site-title" id="siteTitle">唐维西</h1>
         <p class="hero-tagline" id="siteTagline">技术探索与个人随笔</p>
       </div>
+
+      <!-- 嵌入右侧空地的 Apple Music 风格播放器 -->
+      <div class="jazz-player" id="jazzBar" hidden>
+        <div class="jp-art" aria-hidden="true">
+          <img class="jp-cover" alt="" width="140" height="140" draggable="false">
+          <div class="jp-cover-fallback"></div>
+          <div class="jp-art-glow"></div>
+        </div>
+        <div class="jp-body">
+          <div class="jp-meta">
+            <span class="jp-label">Now Playing</span>
+            <span class="jp-title">即将播放</span>
+            <span class="jp-artist">经典爵士乐</span>
+          </div>
+          <div class="jp-scrub" role="slider" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            <div class="jp-progress">
+              <div class="jp-filled"></div>
+              <div class="jp-knob"></div>
+            </div>
+            <div class="jp-time-row">
+              <span class="jp-cur">0:00</span>
+              <span class="jp-dur">–:–</span>
+            </div>
+          </div>
+          <div class="jp-controls">
+            <button class="jp-btn jp-prev" aria-label="上一首" title="上一首">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg>
+            </button>
+            <button class="jp-btn jp-play" aria-label="播放/暂停" title="播放爵士乐">
+              <svg class="jp-ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <svg class="jp-ico-pause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+            </button>
+            <button class="jp-btn jp-next" aria-label="下一首" title="下一首">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6zM16 6h2v12h-2z"/></svg>
+            </button>
+            <button class="jp-btn jp-vol" aria-label="静音切换" title="静音 / 恢复">
+              <svg class="jp-ico-vol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/>
+              </svg>
+              <svg class="jp-ico-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <path d="M23 9l-6 6M17 9l6 6"/>
+              </svg>
+            </button>
+          </div>
+          <p class="jp-hint">正在准备播放…</p>
+        </div>
+      </div>
+
       <div class="hero-links-wrap" id="linksBar" hidden>
         <ul class="hero-links" id="linksList"></ul>
       </div>
@@ -98,10 +148,12 @@
 </a>
 
 <!-- 数据（自动生成，别手改） -->
-<script src="data/site.js?v=e777ea446e"></script>
-<script src="data/articles.js?v=e777ea446e"></script>
+<script src="data/site.js?v=762a8f5218"></script>
+<script src="data/articles.js?v=762a8f5218"></script>
+<script src="data/music.js?v=762a8f5218"></script>
 <!-- 逻辑 -->
-<script src="assets/common.js?v=e777ea446e"></script>
-<script src="assets/home.js?v=e777ea446e"></script>
+<script src="assets/common.js?v=762a8f5218"></script>
+<script src="assets/music-player.js?v=762a8f5218"></script>
+<script src="assets/home.js?v=762a8f5218"></script>
 </body>
 </html>

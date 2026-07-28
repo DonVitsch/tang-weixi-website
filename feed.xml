@@ -5,7 +5,7 @@
   <link>donvitsch.blog</link>
   <description>随笔，拾人牙慧罢了</description>
   <language>zh-cn</language>
-  <lastBuildDate>Mon, 27 Jul 2026 00:00:00 GMT</lastBuildDate>
+  <lastBuildDate>Tue, 28 Jul 2026 00:00:00 GMT</lastBuildDate>
   <atom:link href="donvitsch.blog/feed.xml" rel="self" type="application/rss+xml"/>
   <item>
     <title>我出生了</title>
@@ -13,7 +13,7 @@
     <guid isPermaLink="false">p20260727-0jeca</guid>
     <pubDate>Sun, 26 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[Claude 德国支付漏洞事件]]></description>
-    <content:encoded><![CDATA[中午到晚上头12点，Claude 出现支付漏洞，可以绕过支付获取 max 20x 订阅。<div><span style="font-size: 1.0625rem; letter-spacing: 0px;"><br></span></div><div><span style="font-size: 1.0625rem; letter-spacing: 0px;">有人做了支付油猴脚本，群主发了100个账号出来。</span></div><div>本网站就出自好几个账号接力做成的，主要模型是： Opus5 &amp; Fable 5</div><div>时间第二天上午10:00，还有人的账号可以使用。</div>]]></content:encoded>
+    <content:encoded><![CDATA[<b>中午到晚上头12点，Claude 出现支付漏洞，可以绕过支付获取 max 20x 订阅。</b><div><span style="font-size: 1.0625rem; letter-spacing: 0px;">有人做了支付油猴脚本，群主发了100个账号出来。</span></div><div>本网站是我用很多账号接力做成的，</div><div>主要模型是： Opus5 &amp; Fable 5</div><div>时间第二天上午10:00，还有人的账号可以使用。</div><figure><img src="donvitsch.blog/uploads/20260728-image-1eeglj.png" alt="" style="max-width: 200%; height: auto;" data-original-width="200%"></figure>]]></content:encoded>
   </item>
   <item>
     <title>唉最近老想写公众号了</title>
@@ -29,6 +29,7 @@
     <guid isPermaLink="false">p20260727-yqc4e</guid>
     <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[把酒流逝]]></description>
+    <content:encoded><![CDATA[<figure><img src="donvitsch.blog/uploads/20260728-33471104fd30f3597b7054eb-pd7az0.jpg" alt=""></figure>]]></content:encoded>
   </item>
   <item>
     <title>LyriAM</title>

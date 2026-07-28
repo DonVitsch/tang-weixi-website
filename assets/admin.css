@@ -477,6 +477,12 @@ body.admin::before { display: none; }
 .tw-editor figure.upload-error { border-color: #dc2626; }
 .tw-editor figure.upload-error .upload-ph { color: #dc2626; }
 
+/* 编辑器里的 figure 必须是定位上下文，否则齿轮按钮会跑去页面右下角 */
+.tw-editor figure { position: relative; }
+/* 编辑器里齿轮按钮常驻显示（不靠 hover），方便点击 */
+.tw-editor .image-size-btn { opacity: 0.9; }
+.tw-editor .image-size-btn:hover { opacity: 1; }
+
 .tw-editor .callout-emoji { cursor: pointer; user-select: none; }
 .tw-editor .todo input { pointer-events: auto; cursor: pointer; }
 
@@ -539,6 +545,13 @@ body.admin::before { display: none; }
   box-shadow: var(--shadow-xl);
   font-family: var(--font-sans);
 }
+/* hidden 属性必须能盖过 inline 的 display:flex，
+   否则工具栏会在密码门时也浮在遮罩之上 */
+.tw-toolbar[hidden],
+.tw-emoji[hidden],
+.tw-mention[hidden],
+.tw-popover[hidden],
+.tw-slash[hidden] { display: none !important; }
 .tw-tb {
   min-width: 30px; height: 30px;
   padding: 0 8px;
@@ -776,3 +789,142 @@ body.admin::before { display: none; }
   color: var(--text-tertiary); font-size: 16px;
 }
 .friend-row .del:hover { color: #dc2626; }
+
+/* ============================================================
+   编辑器弹出层：Emoji / 提及 / 字体 / 颜色 / 图片尺寸
+   --------------------------------------------------------------
+   之前 .tw-emoji / .tw-mention 没有 position，导致面板虽然
+   打开了却跑到页面流末尾、被 overflow:hidden 切掉，看着像没反应
+   ============================================================ */
+.tw-emoji, .tw-mention, .tw-popover {
+  position: fixed;
+  z-index: 1600;       /* 高于工具栏(1500)，低于密码门(2000) */
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: var(--shadow-xl);
+  padding: 10px;
+  font-family: var(--font-sans);
+}
+.tw-emoji { width: 312px; }
+.tw-emoji .emoji-search {
+  width: 100%; box-sizing: border-box;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+}
+.tw-emoji .emoji-search:focus { border-color: var(--accent-primary); }
+.tw-emoji .emoji-grid {
+  max-height: 320px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  font-size: 22px;
+}
+.tw-emoji .emoji-grid button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  font-size: 22px;
+  line-height: 1;
+}
+.tw-emoji .emoji-grid button:hover { background: var(--accent-alpha); transform: scale(1.15); }
+.tw-mention { width: 300px; }
+
+.tw-mention-search {
+  width: 100%; box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+}
+.tw-mention-search:focus { border-color: var(--accent-primary); }
+.tw-mention-list { max-height: 280px; overflow-y: auto; }
+.tw-mention-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+}
+.tw-mention-item:hover, .tw-mention-item.active { background: var(--accent-alpha); }
+.tw-mention-t { font-size: 13px; color: var(--text-primary); }
+.tw-mention-d { font-size: 11px; color: var(--text-tertiary); }
+
+/* 字体 / 颜色 / 图片尺寸弹出层 */
+.tw-popover { width: 240px; }
+.tw-popover.image-size-dialog { width: 260px; }
+.tw-pop-title { font-size: 12px; font-weight: 700; color: var(--text-tertiary); margin-bottom: 8px; }
+.tw-pop-row { display: flex; gap: 6px; align-items: center; }
+.tw-pop-row .img-size-input {
+  flex: 1; height: 32px; padding: 0 10px;
+  border: 1px solid var(--border-color); border-radius: 8px;
+  background: var(--bg-primary); color: var(--text-primary);
+  font-size: 13px; outline: none; min-width: 0;
+}
+.tw-pop-row .img-size-input:focus { border-color: var(--accent-primary); }
+.tw-pop-row .img-size-unit {
+  height: 32px; border: 1px solid var(--border-color); border-radius: 8px;
+  background: var(--bg-primary); color: var(--text-primary); font-size: 12px;
+}
+.tw-pop-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 6px; line-height: 1.5; }
+.tw-pop-actions { display: flex; gap: 6px; justify-content: flex-end; margin-top: 10px; }
+
+/* 字体选项 */
+.tw-pop-opt {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none; background: none;
+  border-radius: 8px; cursor: pointer;
+  color: var(--text-primary);
+}
+.tw-pop-opt:hover { background: var(--accent-alpha); }
+.tw-pop-sample { font-size: 18px; min-width: 22px; text-align: center; }
+.tw-pop-label { font-size: 13px; }
+
+/* 调色板 */
+.tw-pop-palette { width: auto; padding: 10px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.tw-pop-swatch {
+  width: 26px; height: 26px;
+  border: 1px solid var(--border-color);
+  border-radius: 7px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-primary);
+}
+.tw-pop-swatch:hover { transform: scale(1.12); border-color: var(--accent-primary); }
+.tw-pop-chip { width: 18px; height: 18px; border-radius: 50%; display: block; }
+.tw-pop-swatch.is-none .tw-pop-chip {
+  background: var(--bg-primary) !important;
+  border: 1px dashed var(--text-tertiary);
+}
+.tw-pop-swatch.is-none::after {
+  content: '╳'; position: absolute; font-size: 11px; color: var(--text-tertiary);
+}
+
+/* 工具条里的字体 / 颜色按钮小图标 */
+.tw-tb .tw-ico { font-size: 13px; font-weight: 700; }
+.tw-tc-ico { position: relative; font-weight: 700; font-size: 14px; }
+.tw-tc-bar {
+  display: block; width: 14px; height: 3px; border-radius: 2px;
+  background: #ef4444; margin-top: 1px;
+}
+.tw-hl-ico {
+  font-size: 14px; font-weight: 700;
+  background: linear-gradient(180deg, transparent 55%, #fde68a 55%);
+  padding: 0 2px;
+}
