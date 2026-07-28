@@ -3,9 +3,17 @@
    -------------------------------------------------------------
    Kind of Blue — Miles Davis (1959)
    + Coltrane / Bill Evans / Cannonball / Sakamoto / Hisaishi 等
-   文件：uploads/music/*.mp3
-   封面：uploads/music/covers/*.jpg（1:1）
+   本地：uploads/music/*.mp3  ·  covers/*.jpg
+   线上：Cloudflare R2（MUSIC_BASE）
    ============================================================ */
+
+// 本地读磁盘；线上走 R2（桶 donvitsch-music 下 music/ 前缀）
+window.MUSIC_BASE =
+  (typeof location !== 'undefined' &&
+   (location.hostname === 'localhost' || location.hostname === '127.0.0.1'))
+    ? 'uploads/music/'
+    : 'https://pub-c9e5dc76661043ecb843c5d224e8fa11.r2.dev/music/';
+
 window.MUSIC_LIST = [
   // ---- Kind of Blue — Miles Davis (1959) ----
   {

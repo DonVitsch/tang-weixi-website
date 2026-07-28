@@ -246,8 +246,27 @@
     }, 400);
   }
 
+  // 本地 uploads/music/ 或线上 R2 MUSIC_BASE
+  function musicBase() {
+    var base = window.MUSIC_BASE || 'uploads/music/';
+    if (base.slice(-1) !== '/') base += '/';
+    return base;
+  }
+
+  function musicUrl(file) {
+    if (!file) return '';
+    if (/^https?:\/\//i.test(file)) return file;
+    return musicBase() + file;
+  }
+
+  function coverUrl(cover) {
+    if (!cover) return '';
+    if (/^https?:\/\//i.test(cover)) return cover;
+    return musicBase() + 'covers/' + cover;
+  }
+
   function applyCover(track) {
-    var url = track.cover ? 'uploads/music/covers/' + track.cover : '';
+    var url = coverUrl(track.cover);
     coverEl.classList.remove('is-loaded');
     coverEl.removeAttribute('src');
     artEl.style.setProperty('--cover-tint', track.tint || '#c48a4a');
@@ -267,7 +286,7 @@
     titleEl.textContent = t.title;
     artistEl.textContent = t.artist;
     applyCover(t);
-    audio.src = 'uploads/music/' + t.file;
+    audio.src = musicUrl(t.file);
     try { audio.load(); } catch (e) { /* */ }
     setProgress(0);
     curEl.textContent = '0:00';
@@ -574,7 +593,7 @@
     errCount++;
     if (errCount >= list.length) {
       titleEl.textContent = '暂无可用音乐';
-      artistEl.textContent = '请检查 uploads/music/';
+      artistEl.textContent = '请检查音乐文件或 R2 链接';
       return;
     }
     load(idx + 1, { autoplay: shouldPlay || started, time: 0 });
