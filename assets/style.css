@@ -2170,14 +2170,6 @@ body:has(.jazz-player--float) .back-top {
   gap: 3px;
   min-width: 0;
 }
-.jp-label {
-  font-size: 0.6875rem;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  margin-bottom: 2px;
-}
 .jp-title {
   font-size: 1.1875rem;
   font-weight: 700;
@@ -2392,7 +2384,6 @@ body:has(.jazz-player--float) .back-top {
 }
 .jazz-player--float .jp-title { font-size: 0.9375rem; }
 .jazz-player--float .jp-artist { font-size: 0.75rem; }
-.jazz-player--float .jp-label { font-size: 0.5625rem; }
 .jazz-player--float .jp-play { width: 38px; height: 38px; }
 .jazz-player--float .jp-btn { width: 32px; height: 32px; }
 .jazz-player--float .jp-btn svg { width: 15px; height: 15px; }
@@ -2414,7 +2405,6 @@ body:has(#writeFab) .jazz-player--float {
   }
   body:has(#writeFab) .jazz-player--float { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
   .jazz-player--float .jp-art { width: 88px; height: 88px; align-self: center; }
-  .jazz-player--float .jp-label { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -70,7 +70,6 @@
       '</div>' +
       '<div class="jp-body">' +
         '<div class="jp-meta">' +
-          '<span class="jp-label">Now Playing</span>' +
           '<span class="jp-title">即将播放</span>' +
           '<span class="jp-artist">经典爵士乐</span>' +
         '</div>' +

@@ -1,5 +1,5 @@
 /* 自动生成，请勿手改 —— 改内容请打开后台 */
-window.__BUST = "5ee93dce82";
+window.__BUST = "934fb8ef6e";
 window.SITE = {
   "name": {
     "zh": "DonVitsch",
