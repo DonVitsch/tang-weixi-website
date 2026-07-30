@@ -236,7 +236,9 @@ function stampHtml(bust) {
 /** 把底稿编译成网页可直接 <script> 引入的文件 */
 function build(db) {
   ensureDirs();
-  const site = db.site || defaultDB().site;
+  const site = Object.assign({}, db.site || defaultDB().site);
+  // 公开配置里永远输出规范化后的网址，避免前端再各自猜协议
+  site.url = normalizeSiteUrl(site.url);
   const bust = makeBust(db);
 
   fs.writeFileSync(
@@ -308,13 +310,44 @@ function pickText(field) {
 }
 
 /**
+ * 把后台填的正式网址收成可用于 RSS / sitemap / canonical 的绝对地址。
+ * 允许只填域名（donvitsch.blog），自动补 https://；已有协议则保留；空值保持空。
+ */
+function normalizeSiteUrl(raw) {
+  let u = String(raw == null ? '' : raw).trim();
+  if (!u) return '';
+  // 误填了多余空白、尾斜杠、全角符号时先收敛
+  u = u.replace(/[\u3000\s]+/g, '').replace(/\/+$/, '');
+  if (!u) return '';
+  if (/^https?:\/\//i.test(u)) {
+    try {
+      const parsed = new URL(u);
+      // 去掉 pathname 里无意义的尾斜杠，只保留 origin（+ 非根 path）
+      const path = parsed.pathname.replace(/\/+$/, '');
+      return (parsed.origin + (path && path !== '/' ? path : '')).replace(/\/+$/, '');
+    } catch (e) {
+      return u.replace(/\/+$/, '');
+    }
+  }
+  // //example.com
+  if (/^\/\//.test(u)) return normalizeSiteUrl('https:' + u);
+  // 明显是域名 / 带端口的主机名
+  if (/^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}(?::\d+)?(?:\/.*)?$/i.test(u) ||
+      /^localhost(?::\d+)?(?:\/.*)?$/i.test(u) ||
+      /^\d{1,3}(?:\.\d{1,3}){3}(?::\d+)?(?:\/.*)?$/.test(u)) {
+    return normalizeSiteUrl('https://' + u);
+  }
+  return u;
+}
+
+/**
  * 生成 feed.xml（RSS 订阅）、sitemap.xml、robots.txt。
  * 网站设置里填了「正式网址」后，链接才是完整的；没填时先用相对路径占位，
  * 本地浏览不受影响，上线前在后台补上网址即可。
  */
 function buildFeedAndSitemap(db, index) {
   const site = db.site || {};
-  const base = String(site.url || '').trim().replace(/\/+$/, '');
+  const base = normalizeSiteUrl(site.url);
   const name = pickText(site.name) || '我的网站';
   const desc = pickText(site.tagline) || '';
   const articleLink = (a) => base + '/article.html?id=' + encodeURIComponent(a.id);
@@ -577,7 +610,11 @@ async function handleAPI(req, res, pathname) {
     }
 
     case '/api/site/save': {
-      db.site = Object.assign({}, db.site, body.site || {});
+      const next = Object.assign({}, db.site, body.site || {});
+      if (Object.prototype.hasOwnProperty.call(body.site || {}, 'url')) {
+        next.url = normalizeSiteUrl(next.url);
+      }
+      db.site = next;
       writeDB(db);
       return sendJSON(res, 200, { ok: true });
     }

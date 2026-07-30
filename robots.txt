@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
-Sitemap: donvitsch.blog/sitemap.xml
+Sitemap: https://donvitsch.blog/sitemap.xml

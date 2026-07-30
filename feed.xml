@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
   <title>DonVitsch</title>
-  <link>donvitsch.blog</link>
+  <link>https://donvitsch.blog</link>
   <description>随笔，拾人牙慧罢了</description>
   <language>zh-cn</language>
   <lastBuildDate>Tue, 28 Jul 2026 00:00:00 GMT</lastBuildDate>
-  <atom:link href="donvitsch.blog/feed.xml" rel="self" type="application/rss+xml"/>
+  <atom:link href="https://donvitsch.blog/feed.xml" rel="self" type="application/rss+xml"/>
   <item>
     <title>我出生了</title>
-    <link>donvitsch.blog/article.html?id=p20260727-0jeca</link>
+    <link>https://donvitsch.blog/article.html?id=p20260727-0jeca</link>
     <guid isPermaLink="false">p20260727-0jeca</guid>
     <pubDate>Sun, 26 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[Claude 德国支付漏洞事件]]></description>
-    <content:encoded><![CDATA[<b>中午到晚上头12点，Claude 出现支付漏洞，可以绕过支付获取 max 20x 订阅。</b><div><span style="font-size: 1.0625rem; letter-spacing: 0px;">有人做了支付油猴脚本，群主发了100个账号出来。</span></div><div>本网站是我用很多账号接力做成的，</div><div>主要模型是： Opus5 &amp; Fable 5</div><div>时间第二天上午10:00，还有人的账号可以使用。</div><figure><img src="donvitsch.blog/uploads/20260728-image-1eeglj.png" alt="" style="max-width: 200%; height: auto;" data-original-width="200%"></figure>]]></content:encoded>
+    <content:encoded><![CDATA[<b>中午到晚上头12点，Claude 出现支付漏洞，可以绕过支付获取 max 20x 订阅。</b><div><span style="font-size: 1.0625rem; letter-spacing: 0px;">有人做了支付油猴脚本，群主发了100个账号出来。</span></div><div>本网站是我用很多账号接力做成的，</div><div>主要模型是： Opus5 &amp; Fable 5</div><div>时间第二天上午10:00，还有人的账号可以使用。</div><figure><img src="https://donvitsch.blog/uploads/20260728-image-1eeglj.png" alt="" style="max-width: 200%; height: auto;" data-original-width="200%"></figure>]]></content:encoded>
   </item>
   <item>
     <title>唉最近老想写公众号了</title>
-    <link>donvitsch.blog/article.html?id=p20260727-gudpa</link>
+    <link>https://donvitsch.blog/article.html?id=p20260727-gudpa</link>
     <guid isPermaLink="false">p20260727-gudpa</guid>
     <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[可是小心心太少了。浏览量太少了。好想痛骂🤬一番 classmates 啊。唉算了。快一个月没在学校了。真爽。]]></description>
@@ -25,15 +25,15 @@
   </item>
   <item>
     <title>肥八分钱</title>
-    <link>donvitsch.blog/article.html?id=p20260727-yqc4e</link>
+    <link>https://donvitsch.blog/article.html?id=p20260727-yqc4e</link>
     <guid isPermaLink="false">p20260727-yqc4e</guid>
     <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[把酒流逝]]></description>
-    <content:encoded><![CDATA[<figure><img src="donvitsch.blog/uploads/20260728-33471104fd30f3597b7054eb-pd7az0.jpg" alt=""></figure>]]></content:encoded>
+    <content:encoded><![CDATA[<figure><img src="https://donvitsch.blog/uploads/20260728-33471104fd30f3597b7054eb-pd7az0.jpg" alt=""></figure>]]></content:encoded>
   </item>
   <item>
     <title>LyriAM</title>
-    <link>donvitsch.blog/article.html?id=p20260727-uvqps</link>
+    <link>https://donvitsch.blog/article.html?id=p20260727-uvqps</link>
     <guid isPermaLink="false">p20260727-uvqps</guid>
     <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[基于 Swift 的 MacOS 歌词灵动岛 APP]]></description>
@@ -41,7 +41,7 @@
   </item>
   <item>
     <title>谁想到给轮胎充气的？</title>
-    <link>donvitsch.blog/article.html?id=p20260727-a8y0g</link>
+    <link>https://donvitsch.blog/article.html?id=p20260727-a8y0g</link>
     <guid isPermaLink="false">p20260727-a8y0g</guid>
     <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[汽车被发明的时候一定是实心的轮胎。像那个捣蛋猪的木轮子。谁是第一个给轮胎打上气的？天才。]]></description>
@@ -49,7 +49,7 @@
   </item>
   <item>
     <title>我的考试自测网页</title>
-    <link>donvitsch.blog/article.html?id=p20260726-nhjx4</link>
+    <link>https://donvitsch.blog/article.html?id=p20260726-nhjx4</link>
     <guid isPermaLink="false">p20260726-nhjx4</guid>
     <pubDate>Sun, 26 Jul 2026 00:00:00 GMT</pubDate>
     <description><![CDATA[期末刷题啊啊啊啊]]></description>

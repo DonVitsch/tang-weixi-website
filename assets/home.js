@@ -259,7 +259,8 @@
   if (urlTag) activeTag = urlTag;
 
   // JSON-LD：告诉搜索引擎这是个什么网站
-  if (SITE.url) {
+  const siteBase = TW.siteBase(SITE.url);
+  if (siteBase) {
     const ld = document.createElement('script');
     ld.type = 'application/ld+json';
     ld.textContent = JSON.stringify({
@@ -267,7 +268,7 @@
       '@type': 'WebSite',
       name: TW.pick(SITE.name) || '唐维西',
       description: TW.pick(SITE.tagline) || undefined,
-      url: String(SITE.url).replace(/\/+$/, '') + '/',
+      url: siteBase + '/',
     });
     document.head.appendChild(ld);
   }

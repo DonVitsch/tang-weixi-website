@@ -1,5 +1,5 @@
 /* 自动生成，请勿手改 —— 改内容请打开后台 */
-window.__BUST = "934fb8ef6e";
+window.__BUST = "571fec7976";
 window.SITE = {
   "name": {
     "zh": "DonVitsch",
@@ -54,7 +54,7 @@ window.SITE = {
     "奇艺搞笑"
   ],
   "about": "<p>你们好啊我是唐维西</p><p>我喜欢超低</p>",
-  "url": "donvitsch.blog",
+  "url": "https://donvitsch.blog",
   "friends": [
     {
       "name": "pp",

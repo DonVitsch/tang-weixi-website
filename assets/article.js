@@ -151,8 +151,8 @@
       set('name', 'twitter:card', 'summary_large_image');
     }
 
-    // 规范链接：填了正式网址才有意义
-    const base = String(site.url || '').replace(/\/+$/, '');
+    // 规范链接：填了正式网址才有意义（域名会自动补 https://）
+    const base = TW.siteBase(site.url);
     const pageUrl = base ? base + '/article.html?id=' + encodeURIComponent(post.id) : '';
     if (pageUrl) {
       let c = document.querySelector('link[rel="canonical"]');
@@ -396,7 +396,7 @@
   function bindShare(post) {
     // 填了正式网址就分享正式链接，否则分享本地地址（局域网里也能用）
     const site = window.SITE || {};
-    const base = String(site.url || '').replace(/\/+$/, '');
+    const base = TW.siteBase(site.url);
     const url = base ? base + '/article.html?id=' + encodeURIComponent(post.id) : location.href;
     const title = TW.pick(post.title);
 

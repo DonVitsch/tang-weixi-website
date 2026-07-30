@@ -714,7 +714,7 @@
         name: { zh: mask.querySelector('#sName').value.trim(), en: mask.querySelector('#sNameEn').value.trim() },
         tagline: { zh: mask.querySelector('#sTag').value.trim(), en: mask.querySelector('#sTagEn').value.trim() },
         footer: { zh: mask.querySelector('#sFooter').value.trim(), en: mask.querySelector('#sFooter').value.trim() },
-        url: mask.querySelector('#sUrl').value.trim().replace(/\/+$/, ''),
+        url: TW.siteBase(mask.querySelector('#sUrl').value),
         logo: logoSel === '__img' ? (logoImg || 'github') : logoSel,
         logoText: mask.querySelector('#sLogoText').value.trim() || '唐',
         links: [...mask.querySelectorAll('.link-row:not(.link-row-head)')].map((r) => {

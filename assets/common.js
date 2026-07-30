@@ -334,6 +334,33 @@ window.TW = (function () {
     return u;
   }
 
+  /**
+   * 站点正式网址（用于 canonical / JSON-LD / 分享）。
+   * 后台只填域名时自动补 https://；已有协议则原样保留；空则返回 ''。
+   */
+  function siteBase(raw) {
+    let u = String(raw != null ? raw : ((window.SITE && window.SITE.url) || '')).trim();
+    if (!u) return '';
+    u = u.replace(/[\u3000\s]+/g, '').replace(/\/+$/, '');
+    if (!u) return '';
+    if (/^https?:\/\//i.test(u)) {
+      try {
+        const parsed = new URL(u);
+        const path = parsed.pathname.replace(/\/+$/, '');
+        return (parsed.origin + (path && path !== '/' ? path : '')).replace(/\/+$/, '');
+      } catch (e) {
+        return u.replace(/\/+$/, '');
+      }
+    }
+    if (/^\/\//.test(u)) return siteBase('https:' + u);
+    if (/^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}(?::\d+)?(?:\/.*)?$/i.test(u) ||
+        /^localhost(?::\d+)?(?:\/.*)?$/i.test(u) ||
+        /^\d{1,3}(?:\.\d{1,3}){3}(?::\d+)?(?:\/.*)?$/.test(u)) {
+      return siteBase('https://' + u);
+    }
+    return u;
+  }
+
   /** 渲染一条社交链接的 HTML（首页 / 关于页共用） */
   function siteLinkItemHTML(l) {
     const name = pick(l.name) || '';
@@ -495,7 +522,7 @@ window.TW = (function () {
     countWords, readingTime, autoSummary,
     autoCoverStyle, hashOf,
     escapeHTML, newId, isLocal, icon, ICONS,
-    toast, copyText, linkAction, linkHref, siteLinkItemHTML, renderSiteLinks,
+    toast, copyText, linkAction, linkHref, siteBase, siteLinkItemHTML, renderSiteLinks,
     initDock, initSticky, initBackTop, footerHTML, reveal, onScrollFrame, prefersReducedMotion,
   };
 })();
